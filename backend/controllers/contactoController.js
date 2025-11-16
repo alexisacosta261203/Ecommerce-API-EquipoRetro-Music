@@ -5,15 +5,15 @@ exports.enviarContacto = async (req, res) => {
 
     try {
         await transporter.sendMail({
-            from: '"Mi Tienda Online" <TU_CORREO@gmail.com>',
+            from: '"Retro Music" <TU_CORREO@gmail.com>',
             to: correo,
             subject: "Gracias por contactarnos",
             html: `
                 <div style="font-family:Arial; padding:20px;">
                     <img src="cid:logo_tienda" width="120">
                     <h2>Hola ${nombre},</h2>
-                    <p>Gracias por escribirnos, <b>en breve te atenderemos</b>.</p>
-                    <p><i>El mejor lugar para comprar en línea.</i></p>
+                    <p>Gracias por escribirnos, <b>en breve será atendido</b>.</p>
+                    <p><i>Donde la música y el artista se vuelven uno solo, los mejores instrumentos que verás en tu vida.</i></p>
                 </div>
             `,
             attachments: [

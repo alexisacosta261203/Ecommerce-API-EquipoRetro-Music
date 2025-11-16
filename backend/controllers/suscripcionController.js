@@ -5,13 +5,14 @@ exports.suscribir = async (req, res) => {
 
     try {
         await transporter.sendMail({
-            from: `"Mi Tienda Online" <${process.env.MAIL_USER}>`,
+            from: `"Retro Music" <${process.env.MAIL_USER}>`,
             to: correo,
             subject: "¡Gracias por suscribirte!",
             html: `
                 <div style="font-family:Arial; padding:20px;">
                     <h2>Bienvenido(a)</h2>
                     <p>Gracias por suscribirte a nuestro boletín. Pronto recibirás noticias, descuentos y novedades.</p>
+                    <p><i>Donde la música y el artista se vuelven uno solo, los mejores instrumentos que verás en tu vida.</i></p>
                 </div>
             `
             ,
