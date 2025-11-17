@@ -2,11 +2,9 @@
 <html lang="es">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Retro Music - Los mejores instrumentos musicales</title>
+    <title>Contacto</title>
     <link rel="stylesheet" href="css/estilos.css">
 </head>
-
 <body>
     <header class="top-header">
         <div class="logo-derecha">
@@ -16,25 +14,34 @@
 
         <nav class="menu-derecha">
             <ul>
-                <li><a href="#">Inicio</a></li>
+                <li><a href="index.html">Inicio</a></li>
                 <li><a href="#">Tienda</a></li>
                 <li><a href="#">Marcas</a></li>
                 <li><a href="#">Nosotros</a></li>
-                <li><a href="contacto.html">Contacto</a></li>
+                <li><a href="#">Contacto</a></li>
             </ul>
         </nav>
     </header>
 
-    <section class="hero">
-        <h1>LOS MEJORES INSTRUMENTOS MUSICALES</h1>
-    </section>
+    <div class="container">
+        <form id="formContacto" class="form">
+            <h2>Contáctanos</h2>
 
-<section class="cta-suscripcion">
-    <div class="cta-container">
-        <h2>Únete a nuestra lista de correo y mantente al tanto</h2>
-        <a href="suscripcion.html" class="btn-suscribete">Suscribirme</a>
+            <label for="nombre">Nombre:</label>
+            <input type="text" id="nombre" required>
+
+            <label for="correo">Correo electrónico:</label>
+            <input type="email" id="correo" required>
+
+            <label for="mensaje">Mensaje:</label>
+            <textarea id="mensaje" required></textarea>
+
+            <button type="submit">Enviar mensaje</button>
+
+            <p id="resultado"></p>
+        </form>
     </div>
-</section>
+
 
     <footer class="footer">
     <div class="footer-container">
@@ -55,5 +62,8 @@
         © 2025 Por RetroMusic - Proyecto académico.
     </div>
 </footer>
+
+<script src="js/contacto.js"></script>
+
 </body>
 </html>

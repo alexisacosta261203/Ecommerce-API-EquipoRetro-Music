@@ -2,6 +2,190 @@
    INICIO ESTILOS DANNA MAJHLI AVALOS SANTOS
    ============================================ */
    
+/****** ESTILOS PARA FORMULARIO DE CONTACTO *******/
+body {
+    background-image: url("../img/fondo.jpg");
+    background-size: cover;     
+    background-repeat: no-repeat; 
+    background-position: center; 
+    font-family: Arial, sans-serif;
+    margin: 0;
+    padding: 0;
+}
+
+.container {
+    width: 100%;
+    min-height: 100vh;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
+
+
+.form {
+     width: 350px;
+    padding: 25px;
+    border-radius: 15px;
+
+    background-image: url("../img/fondocontacto.jpg");
+    background-size: cover;        
+    background-repeat: no-repeat;  
+    background-position: center;   
+
+    color: #fff; 
+    background-color: rgba(0,0,0,0.3); 
+    box-shadow: 0 4px 15px rgba(0,0,0,0.3);
+}
+
+.form input,
+.form textarea,
+.form button {
+    width: 90%;           
+    max-width: 300px;     
+    margin: 10px auto;    
+    display: block;      
+}
+
+.form h2 {
+    text-align: center;
+    margin-bottom: 20px;
+    color: #0d0d0d;
+}
+
+.form label {
+    font-weight: bold;
+    display: block;
+    margin-top: 15px;
+    color: #444;
+}
+
+.form input,
+.form textarea {
+    width: 100%;
+    padding: 10px;
+    margin-top: 5px;
+    border-radius: 8px;
+    border: 1px solid #d1d1d1;
+    font-size: 14px;
+    outline: none;
+    transition: border-color 0.3s;
+}
+
+.form input:focus,
+.form textarea:focus {
+    border-color: #7b4bff;
+}
+
+
+.form textarea {
+    height: 100px;
+    resize: none;
+}
+
+.form button {
+    width: 100%;
+    background: #388390;
+    color: white;
+    padding: 12px 0;
+    border: none;
+    border-radius: 8px;
+    font-size: 16px;
+    margin-top: 20px;
+    cursor: pointer;
+    transition: background 0.3s;
+}
+
+.form button:hover {
+    background: #5f34d6;
+}
+
+
+#resultado {
+    text-align: center;
+    margin-top: 15px;
+}
+
+.mensaje-exito {
+    color: #152844; 
+    font-weight: bold;
+}
+
+.mensaje-error {
+    color: #ff0000; 
+    font-weight: bold;
+}
+
+
+
+/******** SEPARACION PARA ESTILOS DE SUSCRIPCION **********/
+/* El formulario de suscripcion usa las mismas clases
+   .container y .form para mantener el diseño uniforme */
+
+#formSuscripcion button {
+    background: #28a745;
+}
+
+#formSuscripcion button:hover {
+    background: #1e7e34;
+}
+
+#resultadoSus {
+    margin-top: 10px;
+    text-align: center;
+    font-weight: bold;
+}
+
+#formSuscripcion label {
+    color: #390d0d;   
+    font-weight: bold;
+}
+
+
+#formSuscripcion {
+    background-image: url("../img/fondosuscripcion.jpg");
+    background-size: cover;
+    background-repeat: no-repeat;
+    background-position: center;
+    background-color: rgba(0,0,0,0.25);
+    color: #fff;
+}
+
+#resultadoSus {
+    text-align: center;
+    margin-top: 10px;
+    font-weight: bold;
+}
+
+/* Sección de suscripción */
+.cta-suscripcion {
+    background-image: url("../img/fondo.jpg");
+    text-align: center;
+    padding: 40px 20px;
+    margin-bottom: 20px; 
+}
+
+.cta-suscripcion h2 {
+    font-size: 20px;
+    margin-bottom: 20px;
+    color: #ac5be2;
+}
+
+.btn-suscribete {
+    display: inline-block;
+    background-color: #28a745;
+    color: #fff;
+    padding: 12px 25px;
+    border-radius: 8px;
+    text-decoration: none;
+    font-weight: bold;
+    transition: background 0.3s;
+}
+
+.btn-suscribete:hover {
+    background-color: #1e7e34;
+}
+
+
 /******** SEPARACION PARA ESTILOS DE PAGINA PRINCIPAL **********/
 * {
     margin: 0;
@@ -166,7 +350,6 @@ body {
     border-top: 1px solid #333;
     font-size: 14px;
 }
-
 
 /* ============================================
    FINAL ESTILOS DANNA MAJHLI AVALOS SANTOS 

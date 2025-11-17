@@ -2,12 +2,11 @@
 <html lang="es">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Retro Music - Los mejores instrumentos musicales</title>
+    <title>Suscripción</title>
     <link rel="stylesheet" href="css/estilos.css">
 </head>
-
 <body>
+
     <header class="top-header">
         <div class="logo-derecha">
             <img src="img/logo.png" alt="Logo Retro Music" class="logo-img">
@@ -16,7 +15,7 @@
 
         <nav class="menu-derecha">
             <ul>
-                <li><a href="#">Inicio</a></li>
+                <li><a href="index.html">Inicio</a></li>
                 <li><a href="#">Tienda</a></li>
                 <li><a href="#">Marcas</a></li>
                 <li><a href="#">Nosotros</a></li>
@@ -25,16 +24,18 @@
         </nav>
     </header>
 
-    <section class="hero">
-        <h1>LOS MEJORES INSTRUMENTOS MUSICALES</h1>
-    </section>
+    <div class="container">
+        <form id="formSuscripcion" class="form">
+            <h2>Suscríbete para recibir ofertas</h2>
 
-<section class="cta-suscripcion">
-    <div class="cta-container">
-        <h2>Únete a nuestra lista de correo y mantente al tanto</h2>
-        <a href="suscripcion.html" class="btn-suscribete">Suscribirme</a>
+            <label for="correoSus">Correo electrónico:</label>
+            <input type="email" id="correoSus" required>
+
+            <button type="submit">Suscribirme</button>
+
+            <p id="resultadoSus"></p>
+        </form>
     </div>
-</section>
 
     <footer class="footer">
     <div class="footer-container">
@@ -55,5 +56,8 @@
         © 2025 Por RetroMusic - Proyecto académico.
     </div>
 </footer>
+
+ <script src="js/suscripcion.js"></script>
+ 
 </body>
 </html>
