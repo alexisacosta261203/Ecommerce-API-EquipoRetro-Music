@@ -4,7 +4,7 @@
    
 /****** ESTILOS PARA FORMULARIO DE CONTACTO *******/
 body {
-    background-image: url("img/fondo.jpg");
+    background-image: url("../img/fondo.jpg");
     background-size: cover;     
     background-repeat: no-repeat; 
     background-position: center; 
@@ -27,7 +27,7 @@ body {
     padding: 25px;
     border-radius: 15px;
 
-    background-image: url("img/fondocontacto.jpg");
+    background-image: url("../img/fondocontacto.jpg");
     background-size: cover;        
     background-repeat: no-repeat;  
     background-position: center;   
@@ -35,6 +35,15 @@ body {
     color: #fff; 
     background-color: rgba(0,0,0,0.3); 
     box-shadow: 0 4px 15px rgba(0,0,0,0.3);
+}
+
+.form input,
+.form textarea,
+.form button {
+    width: 90%;           
+    max-width: 300px;     
+    margin: 10px auto;    
+    display: block;      
 }
 
 .form h2 {
@@ -90,15 +99,26 @@ body {
     background: #5f34d6;
 }
 
+
 #resultado {
     text-align: center;
     margin-top: 15px;
-    color: #333;
+}
+
+.mensaje-exito {
+    color: #152844; 
+    font-weight: bold;
+}
+
+.mensaje-error {
+    color: #ff0000; 
+    font-weight: bold;
 }
 
 
+
 /******** SEPARACION PARA ESTILOS DE SUSCRIPCION **********/
-/* El formulario de suscripción usa las MISMAS clases
+/* El formulario de suscripcion usa las mismas clases
    .container y .form para mantener el diseño uniforme */
 
 #formSuscripcion button {
@@ -122,13 +142,21 @@ body {
 
 
 #formSuscripcion {
-    background-image: url("img/fondosuscripcion.jpg");
+    background-image: url("../img/fondosuscripcion.jpg");
     background-size: cover;
     background-repeat: no-repeat;
     background-position: center;
     background-color: rgba(0,0,0,0.25);
     color: #fff;
 }
+
+#resultadoSus {
+    text-align: center;
+    margin-top: 10px;
+    font-weight: bold;
+}
+
+
 
 /* ============================================
    FINAL ESTILOS DANNA MAJHLI AVALOS SANTOS 

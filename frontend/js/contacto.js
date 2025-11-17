@@ -13,18 +13,20 @@ document.getElementById("formContacto").addEventListener("submit", async (e) => 
         });
 
         const data = await res.json();
+        const resultado = document.getElementById("resultado"); 
 
         if (res.ok) {
-            document.getElementById("resultado").innerText = "¡Mensaje enviado correctamente!";
-            document.getElementById("resultado").style.color = "green";
+            resultado.innerText = "¡Mensaje enviado correctamente!";
+            resultado.className = "mensaje-exito"; 
             e.target.reset();
         } else {
-            document.getElementById("resultado").innerText = data.error || "Hubo un error.";
-            document.getElementById("resultado").style.color = "red";
+            resultado.innerText = data.error || "Hubo un error.";
+            resultado.className = "mensaje-error";
         }
 
     } catch (error) {
-        document.getElementById("resultado").innerText = "Error de conexión con el servidor.";
-        document.getElementById("resultado").style.color = "red";
+        const resultado = document.getElementById("resultado");
+        resultado.innerText = "Error de conexión con el servidor.";
+        resultado.className = "mensaje-error"; 
     }
 });
