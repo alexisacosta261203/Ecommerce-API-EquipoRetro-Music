@@ -156,6 +156,36 @@ body {
     font-weight: bold;
 }
 
+/* Sección de suscripción */
+.cta-suscripcion {
+    background-image: url("../img/fondo.jpg");
+    text-align: center;
+    padding: 40px 20px;
+    margin-bottom: 20px; 
+}
+
+.cta-suscripcion h2 {
+    font-size: 20px;
+    margin-bottom: 20px;
+    color: #ac5be2;
+}
+
+.btn-suscribete {
+    display: inline-block;
+    background-color: #28a745;
+    color: #fff;
+    padding: 12px 25px;
+    border-radius: 8px;
+    text-decoration: none;
+    font-weight: bold;
+    transition: background 0.3s;
+}
+
+.btn-suscribete:hover {
+    background-color: #1e7e34;
+}
+
+
 /******** SEPARACION PARA ESTILOS DE PAGINA PRINCIPAL **********/
 * {
     margin: 0;
