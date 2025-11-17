@@ -1,0 +1,268 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8" />
+    <title>Retro Music | Panel de Administrador</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+
+    <!-- Fuente retro (opcional) -->
+    <link href="https://fonts.googleapis.com/css2?family=Press+Start+2P&family=Inter:wght@300;400;500;600&display=swap" rel="stylesheet">
+
+    <!-- CSS -->
+    <link rel="stylesheet" href="css/admin.css">
+</head>
+<body>
+<div class="admin-layout">
+    <!-- SIDEBAR -->
+    <aside class="sidebar">
+        <div class="logo">
+            <div class="logo-img-wrapper">
+                <img src="img/logo.png" alt="Retro Music logo" class="logo-img">
+            </div>
+            <div class="logo-text">
+                <h1>Retro Music</h1>
+                <span>Panel de administrador</span>
+            </div>
+        </div>
+
+        <div>
+            <div class="sidebar-section-title">Navegación</div>
+            <div class="menu">
+                <button class="menu-btn active">
+                    <span class="icon">📀</span>
+                    Productos
+                </button>
+                <button class="menu-btn">
+                    <span class="icon">🧾</span>
+                    Órdenes
+                </button>
+                <button class="menu-btn">
+                    <span class="icon">👤</span>
+                    Usuarios
+                </button>
+                <button class="menu-btn">
+                    <span class="icon">⚙️</span>
+                    Ajustes
+                </button>
+            </div>
+        </div>
+
+        <div>
+            <div class="sidebar-section-title">Resumen rápido</div>
+            <div class="summary-card">
+                <div>
+                    <span class="label">Productos</span><br>
+                    <span class="value" id="summary-total">0</span>
+                </div>
+                <div>
+                    <span class="label">Vinilos</span><br>
+                    <span class="value" id="summary-vinilos">0</span>
+                </div>
+                <div>
+                    <span class="label">Cassettes</span><br>
+                    <span class="value" id="summary-cassettes">0</span>
+                </div>
+                <div>
+                    <span class="label">CDs</span><br>
+                    <span class="value" id="summary-cds">0</span>
+                </div>
+            </div>
+            <div class="badge-status">
+                <div class="badge-status-dot"></div>
+                Panel listo para conectar al back-end
+            </div>
+        </div>
+    </aside>
+
+    <!-- MAIN -->
+    <main class="main">
+        <!-- HEADER -->
+        <div class="main-header">
+            <div class="main-header-info">
+                <h2>
+                    Gestión de productos
+                    <span class="emoji">🎛️</span>
+                </h2>
+                <p>Agrega, edita o elimina productos del catálogo de Retro Music.</p>
+            </div>
+
+            <div class="top-actions">
+                <div class="pill">
+                    <div class="pill-dot"></div>
+                    Modo administrador – Sesión activa
+                </div>
+
+                <div class="search-wrapper">
+                    <input
+                        type="text"
+                        id="searchInput"
+                        class="search-input"
+                        placeholder="Buscar por nombre o artista..."
+                    />
+                    <span class="search-icon">🔍</span>
+                </div>
+
+                <select id="filterCategory" class="filter-select">
+                    <option value="todas">Todas las categorías</option>
+                    <option value="vinilo">Vinilos</option>
+                    <option value="cassette">Cassettes</option>
+                    <option value="cd">CDs</option>
+                    <option value="playera">Playeras</option>
+                    <option value="poster">Posters</option>
+                </select>
+
+                <button type="button" class="btn-primary" id="scrollToFormBtn">
+                    <span>＋</span> Nuevo producto
+                </button>
+            </div>
+        </div>
+
+        <!-- CONTENIDO -->
+        <div class="content">
+            <!-- FORMULARIO -->
+            <section class="card">
+                <div class="card-header">
+                    <div>
+                        <h3>Agregar producto</h3>
+                        <span>Completa los campos para añadir un nuevo artículo al catálogo.</span>
+                    </div>
+                </div>
+
+                <form id="productForm">
+                    <div class="form-grid">
+                        <div class="form-group">
+                            <label for="name">Nombre del producto *</label>
+                            <input
+                                type="text"
+                                id="name"
+                                class="form-control"
+                                placeholder="Ej. Album Thriller (Edición vinilo)"
+                                required
+                            />
+                        </div>
+
+                        <div class="form-group">
+                            <label for="artist">Artista / Banda *</label>
+                            <input
+                                type="text"
+                                id="artist"
+                                class="form-control"
+                                placeholder="Ej. Michael Jackson"
+                                required
+                            />
+                        </div>
+
+                        <div class="form-group">
+                            <label for="category">Categoría *</label>
+                            <select id="category" class="form-select" required>
+                                <option value="">Selecciona una opción</option>
+                                <option value="vinilo">Vinilo</option>
+                                <option value="cassette">Cassette</option>
+                                <option value="cd">CD</option>
+                                <option value="playera">Playera</option>
+                                <option value="poster">Poster</option>
+                            </select>
+                        </div>
+
+                        <div class="form-group">
+                            <label for="price">Precio (MXN) *</label>
+                            <input
+                                type="number"
+                                id="price"
+                                class="form-control"
+                                placeholder="Ej. 599"
+                                min="0"
+                                step="0.01"
+                                required
+                            />
+                        </div>
+
+                        <div class="form-group">
+                            <label for="stock">Stock *</label>
+                            <input
+                                type="number"
+                                id="stock"
+                                class="form-control"
+                                placeholder="Ej. 10"
+                                min="0"
+                                step="1"
+                                required
+                            />
+                        </div>
+
+                        <div class="form-group">
+                            <label for="image">URL de imagen (opcional)</label>
+                            <input
+                                type="url"
+                                id="image"
+                                class="form-control"
+                                placeholder="https://tus-imagenes.com/thriller-vinilo.jpg"
+                            />
+                        </div>
+                    </div>
+
+                    <div class="form-group">
+                        <label for="description">Descripción breve</label>
+                        <textarea
+                            id="description"
+                            class="form-textarea"
+                            placeholder="Edición clásica en vinilo, portada original y sonido remasterizado."
+                        ></textarea>
+                    </div>
+
+                    <div class="form-actions">
+                        <button type="button" class="btn-outline" id="resetFormBtn">
+                            Limpiar formulario
+                        </button>
+                        <button type="submit" class="btn-primary">
+                            <span>Guardar producto</span>
+                        </button>
+                    </div>
+                </form>
+            </section>
+
+            <!-- TABLA DE PRODUCTOS -->
+            <section class="card-plain">
+                <div class="card-header">
+                    <div>
+                        <h3>Productos registrados</h3>
+                        <span id="productsCounter">0 productos en el catálogo.</span>
+                    </div>
+                </div>
+
+                <div class="table-wrapper">
+                    <table>
+                        <thead>
+                        <tr>
+                            <th>Producto</th>
+                            <th>Categoría</th>
+                            <th>Precio</th>
+                            <th>Stock</th>
+                            <th>Acciones</th>
+                        </tr>
+                        </thead>
+                        <tbody id="productsTableBody">
+                        <!-- Filas generadas por JS -->
+                        </tbody>
+                    </table>
+
+                    <div id="emptyState" class="empty-state">
+                        No hay productos registrados aún.
+                        <span>Agrega tu primer vinilo, cassette o CD con el formulario de la izquierda.</span>
+                    </div>
+                </div>
+            </section>
+        </div>
+
+        <!-- FOOTER -->
+        <footer class="footer">
+            <span>Retro Music · Panel de administración</span>
+            <span><strong>Nota:</strong> Interfaz de prueba, lista para conectar con el servidor.</span>
+        </footer>
+    </main>
+</div>
+
+<!-- JS -->
+<script src="js/admin.js"></script>
+</body>
+</html>
