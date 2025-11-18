@@ -1,0 +1,43 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Productos</title>
+     <link rel="stylesheet" href="estilos.css">
+</head>
+<body>
+    
+<div class="categorias">
+    <button class="cat-btn active" onclick="filtrar('todos', this)">Todos los productos</button>
+    <button class="cat-btn" onclick="filtrar('guitarras', this)">Guitarras</button>
+    <button class="cat-btn" onclick="filtrar('electricas', this)">Guitarras Eléctricas</button>
+    <button class="cat-btn" onclick="filtrar('bajos', this)">Bajos</button>
+    <button class="cat-btn" onclick="filtrar('baterias', this)">Baterías</button>
+</div>
+
+<h2 class="guitarras">Guitarras</h2>
+<div class="categoria-guitarras">
+
+    
+
+</div>
+
+
+<script>
+function filtrar(categoria, btn) {
+
+    // Quitar el active a todos
+    document.querySelectorAll(".cat-btn").forEach(b => b.classList.remove("active"));
+
+    // Activar solo el clickeado
+    btn.classList.add("active");
+
+    // Lógica de filtrado (lo que ya tengas)
+    console.log("Filtrando:", categoria);
+}
+</script>
+
+
+</body>
+</html>

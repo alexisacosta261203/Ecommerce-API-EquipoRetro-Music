@@ -1,0 +1,27 @@
+.categorias {
+    display: flex;
+    gap: 10px;
+    margin-bottom: 25px;
+}
+
+.cat-btn {
+    padding: 10px 20px;
+    border: 1px solid #ccc;
+    background: white;
+    cursor: pointer;
+    font-size: 16px;
+    border-radius: 4px;
+    transition: 0.2s;
+}
+
+.cat-btn:hover {
+    background: #f2f2f2;
+}
+
+/* Botón ACTIVO */
+.cat-btn.active {
+    background: #7C3AED; /* morado */
+    color: white;
+    font-weight: bold;
+    border-color: #7C3AED;
+}
