@@ -1,28 +1,51 @@
 require('dotenv').config();
 const express = require('express');
 const cors = require('cors');
-const categoriasRutas = require('./routes/categoriasRoutes.js');
-const pool = require('./db/conexion'); //aqui estamos importando la conexion
+const allRoutes = require('./routes/categoriasRoutes');
+const pool = require('./db/conexion');
+const path = require('path');
+
 const app = express();
 const PORT = process.env.PORT || 3000;
 
-app.get('/', (req, res) => {
-res.send(' Estoy funcionando');
+// CORS - SOLO UNA VEZ
+app.use(cors({
+    origin: '*',
+    methods: ['GET', 'POST', 'PUT', 'DELETE'],
+    allowedHeaders: ['Content-Type', 'Authorization']
+}));
+
+app.use(express.json());
+
+// MIDDLEWARE DE LOGS
+app.use((req, res, next) => {
+    console.log(`📨 ${new Date().toISOString()} - ${req.method} ${req.url}`);
+    next();
 });
 
-app.use('/api/categorias', categoriasRoutes);
+// Servir imágenes
+app.use('/uploads', express.static(path.join(__dirname, 'uploads')));
 
+// Todas las rutas en un solo archivo
+app.use('/api', allRoutes);
+
+// Ruta de prueba básica
+app.get('/test', (req, res) => {
+    console.log('✅ Ruta /test accedida');
+    res.json({ message: 'Backend funcionando!', time: new Date() });
+});
+
+// Test conexión
 async function testConnection() {
-try {
-const [rows] = await pool.query('SELECT 1 + 1 AS result');  
+    try {
+        const [rows] = await pool.query('SELECT 1 + 1 AS result');
+        console.log("Conexión OK:", rows[0].result);
+    } catch (e) {
+        console.log("Error conexión:", e.message);
+    }
+}
 
-console.log(' Conexión a la base de datos establecida. Resultado:', rows[0].result);
-} catch (error) {
-console.error(' Error al conectar con la base de datos:', error.message);
-}
-}
-// Iniciar servidor y probar conexión
 app.listen(PORT, async () => {
-console.log(`Servidor escuchando en http://localhost:${PORT}`);
-await testConnection(); 
+    console.log(`Servidor corriendo en http://localhost:${PORT}`);
+    await testConnection();
 });
