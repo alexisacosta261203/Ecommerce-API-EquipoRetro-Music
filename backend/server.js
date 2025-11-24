@@ -8,7 +8,6 @@ const path = require('path');
 const app = express();
 const PORT = process.env.PORT || 3000;
 
-// CORS - SOLO UNA VEZ
 app.use(cors({
     origin: '*',
     methods: ['GET', 'POST', 'PUT', 'DELETE'],
@@ -19,7 +18,7 @@ app.use(express.json());
 
 // MIDDLEWARE DE LOGS
 app.use((req, res, next) => {
-    console.log(`📨 ${new Date().toISOString()} - ${req.method} ${req.url}`);
+    console.log(` ${new Date().toISOString()} - ${req.method} ${req.url}`);
     next();
 });
 
@@ -31,7 +30,7 @@ app.use('/api', allRoutes);
 
 // Ruta de prueba básica
 app.get('/test', (req, res) => {
-    console.log('✅ Ruta /test accedida');
+    console.log('Ruta /test accedida');
     res.json({ message: 'Backend funcionando!', time: new Date() });
 });
 

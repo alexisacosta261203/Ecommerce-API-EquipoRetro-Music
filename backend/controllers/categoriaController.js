@@ -84,14 +84,12 @@ const getMarcas = async (req, res) => {
     }
 };
 
-// ===============================
-// PRODUCTOS POR MARCA - CORREGIDO
-// ===============================
+//productos marca
 const getMarcaProductos = async (req, res) => {
     const marcaId = req.params.id;
     
     try {
-        console.log(`🔍 Buscando productos para marca ${marcaId}...`);
+        console.log(`Buscando productos para marca ${marcaId}...`);
         
         const [rows] = await pool.query(
             `SELECT p.*, c.nombre AS categoria, m.nombre AS marca
@@ -102,11 +100,11 @@ const getMarcaProductos = async (req, res) => {
             [marcaId]
         );
 
-        console.log(`✅ Encontrados ${rows.length} productos para marca ${marcaId}`);
+        console.log(`Encontrados ${rows.length} productos para marca ${marcaId}`);
         res.json(rows);
         
     } catch (error) {
-        console.error("❌ Error en getMarcaProductos:", error.message);
+        console.error("Error en getMarcaProductos:", error.message);
         res.status(500).json({ 
             error: "Error obteniendo productos por marca",
             message: error.message

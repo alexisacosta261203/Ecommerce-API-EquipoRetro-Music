@@ -2,156 +2,76 @@
 <html lang="es">
 <head>
     <meta charset="UTF-8">
-    <title>Administrador - Productos</title>
-    <script src="https://cdn.tailwindcss.com"></script>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Tienda de Instrumentos Musicales</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <link rel="stylesheet" href="estilos.css">
 </head>
-<body class="bg-gray-900 text-white">
+<body>
+    <!-- Header de la página -->
+    <header class="header">
+        <div class="header-container">
+            <div class="header-content">
+                <h1 class="header-title">Todos los productos</h1>
+                <div class="header-actions">
+                    <span class="product-counter" id="contadorProductos">0 productos</span>
+                    <button class="cart-button">
+                        <i class="fas fa-shopping-cart cart-icon"></i>Carrito
+                    </button>
+                </div>
+            </div>
+        </div>
+    </header>
 
-    <div class="max-w-5xl mx-auto mt-10">
+    <!-- Contenido principal -->
+    <main class="main-container">
+        <!-- Sección de filtros -->
+        <section class="filters-section">
+            <!-- Filtro por categorías -->
+            <div class="filter-group">
+                <span class="filter-label">Categorías:</span>
+                <div class="filter-buttons" id="categoriasContainer">
+                    <button class="filter-button active" data-tipo="categoria" data-valor="">
+                        Todas
+                    </button>
+                    <!-- Los botones de categorías se cargarán dinámicamente -->
+                </div>
+            </div>
 
-        <h1 class="text-3xl font-bold mb-6">Administrador de Productos</h1>
+            <!-- Filtro por marcas -->
+            <div class="filter-group">
+                <span class="filter-label">Marcas:</span>
+                <div class="filter-buttons" id="marcasContainer">
+                    <button class="filter-button active" data-tipo="marca" data-valor="">
+                        Todas
+                    </button>
+                    <!-- Los botones de marcas se cargarán dinámicamente -->
+                </div>
+            </div>
 
-        <!-- FILTROS -->
-        <div class="grid grid-cols-1 md:grid-cols-2 gap-4 mb-6">
+            <!-- Ordenamiento -->
+            <div class="sort-group">
+                <span class="filter-label">Ordenar por:</span>
+                <select id="ordenSelect" class="sort-select">
+                    <option value="recomendados">Recomendados</option>
+                    <option value="precio-asc">Precio: Menor a Mayor</option>
+                    <option value="precio-desc">Precio: Mayor a Menor</option>
+                    <option value="nombre-asc">Nombre A-Z</option>
+                </select>
+            </div>
+        </section>
 
-            <!-- CATEGORÍAS -->
-           
-        <div>
-             <label class="block mb-2 font-semibold">Categoría</label>
-             <select id="categoriaSelect" class="w-full p-2 rounded bg-gray-800">
-             <option value="">Todas</option>
-            <!-- Se cargarán dinámicamente -->
-             </select>
+        <!-- Contador de productos filtrados -->
+        <div class="counter-section">
+            <span class="counter-text" id="contadorFiltrado"></span>
         </div>
 
-        <!-- MARCAS -->
-        <div>
-          <label class="block mb-2 font-semibold">Marca</label>
-          <select id="marcaSelect" class="w-full p-2 rounded bg-gray-800">
-            <option value="">Todas</option>
-        <!-- Se cargarán dinámicamente -->
-    </select>
-</div>
+        <!-- Grid de productos -->
+        <section id="productosContainer" class="products-grid">
+            <!-- Los productos se cargarán dinámicamente aquí -->
+        </section>
+    </main>
 
-        </div>
-
-        <button id="buscarBtn" class="bg-blue-600 px-4 py-2 rounded hover:bg-blue-700">
-            Buscar
-        </button>
-
-        <!-- LISTA DE PRODUCTOS -->
-        <div id="productosContainer" class="mt-8 grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6"></div>
-
-    </div>
-
-    <script>
-        const API_URL = "http://localhost:3000/api";
-
-        // Cargar datos al iniciar
-        document.addEventListener('DOMContentLoaded', function() {
-            cargarCategorias();
-            cargarMarcas();
-            cargarProductos();
-        });
-
-        document.getElementById("buscarBtn").addEventListener("click", cargarProductos);
-
-        // Cargar categorías desde la API
-        async function cargarCategorias() {
-            try {
-                const res = await fetch(`${API_URL}/categorias`);
-                const categorias = await res.json();
-                
-                const select = document.getElementById("categoriaSelect");
-                select.innerHTML = '<option value="">Todas</option>';
-                
-                categorias.forEach(cat => {
-                    select.innerHTML += `<option value="${cat.id}">${cat.nombre}</option>`;
-                });
-            } catch (error) {
-                console.error("Error cargando categorías:", error);
-            }
-        }
-
-        // Cargar marcas desde la API
-        async function cargarMarcas() {
-            try {
-                const res = await fetch(`${API_URL}/marcas`);
-                const marcas = await res.json();
-                
-                const select = document.getElementById("marcaSelect");
-                select.innerHTML = '<option value="">Todas</option>';
-                
-                marcas.forEach(marca => {
-                    select.innerHTML += `<option value="${marca.id}">${marca.nombre}</option>`;
-                });
-            } catch (error) {
-                console.error("Error cargando marcas:", error);
-            }
-        }
-
-        // Cargar productos con filtros
-        async function cargarProductos() {
-            try {
-                const categoria = document.getElementById("categoriaSelect").value;
-                const marca = document.getElementById("marcaSelect").value;
-
-                let url = `${API_URL}/productos`;
-                
-                // Si hay filtros, usar las rutas específicas
-                if (categoria && !marca) {
-                    url = `${API_URL}/categorias/${categoria}/productos`;
-                } else if (marca && !categoria) {
-                    url = `${API_URL}/marcas/${marca}/productos`;
-                } else if (categoria && marca) {
-                    // Si hay ambos filtros, cargar todos y filtrar en el frontend
-                    url = `${API_URL}/productos`;
-                }
-
-                const res = await fetch(url);
-                let productos = await res.json();
-
-                // Filtrar por ambos criterios si es necesario
-                if (categoria && marca) {
-                    productos = productos.filter(p => 
-                        p.categoria_id == categoria && p.marca_id == marca
-                    );
-                }
-
-                renderProductos(productos);
-            } catch (error) {
-                console.error("Error cargando productos:", error);
-                document.getElementById("productosContainer").innerHTML = 
-                    '<p class="text-red-400">Error cargando productos</p>';
-            }
-        }
-
-        function renderProductos(productos) {
-            const container = document.getElementById("productosContainer");
-            container.innerHTML = "";
-
-            if (productos.length === 0) {
-                container.innerHTML = `<p class="text-gray-400">No hay productos para mostrar.</p>`;
-                return;
-            }
-
-            productos.forEach(p => {
-                // Manejar imagen por defecto si no existe
-                const imagen = p.imagen || 'https://via.placeholder.com/300x200?text=Sin+Imagen';
-                
-                container.innerHTML += `
-                    <div class="bg-gray-800 p-4 rounded shadow">
-                        <img src="${imagen}" class="w-full h-40 object-cover rounded mb-3">
-                        <h3 class="text-xl font-semibold mb-1">${p.nombre}</h3>
-                        <p class="text-gray-400 text-sm">Categoría: ${p.categoria || p.categoria_id}</p>
-                        <p class="text-gray-400 text-sm">Marca: ${p.marca || p.marca_id}</p>
-                        <p class="text-lg font-bold mt-2">$${p.precio}</p>
-                        <p class="text-sm text-gray-300 mt-1">${p.descripcion || ''}</p>
-                    </div>
-                `;
-            });
-        }
-    </script>
-
+    <script src="app.js"></script>
 </body>
 </html>

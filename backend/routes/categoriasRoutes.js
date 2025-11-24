@@ -1,30 +1,24 @@
 const express = require('express');
 const router = express.Router();
 
-// CORREGIR LA IMPORTACIÓN - debe coincidir con el nombre del archivo
+//importamos
 const {
     getCategorias,
     getCategoriaProductos,
     getMarcas,
     getMarcaProductos,
     getProductos
-} = require('../controllers/categoriaController'); // ← ESTÁ BIEN ASÍ (categoriaController)
+} = require('../controllers/categoriaController'); 
 
-// -------------------------------
-// CATEGORÍAS
-// -------------------------------
+//categorias
 router.get('/categorias', getCategorias);
 router.get('/categorias/:id/productos', getCategoriaProductos);
 
-// -------------------------------
-// MARCAS
-// -------------------------------
+//marcas
 router.get('/marcas', getMarcas);
 router.get('/marcas/:id/productos', getMarcaProductos);
 
-// -------------------------------
-// PRODUCTOS
-// -------------------------------
+//prodcutos
 router.get('/productos', getProductos);
 
 module.exports = router;
