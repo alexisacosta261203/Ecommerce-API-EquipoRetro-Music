@@ -1,0 +1,341 @@
+/* accessibility.css - Estilos para el sistema de accesibilidad */
+
+:root {
+  --font-size-multiplier: 1;
+  
+  /* Tema claro */
+  --bg-primary: #ffffff;
+  --bg-secondary: #f5f5f5;
+  --text-primary: #333333;
+  --text-secondary: #666666;
+  --border-color: #dddddd;
+  --shadow: rgba(0, 0, 0, 0.1);
+  --accent: #007bff;
+  --accent-hover: #0056b3;
+}
+
+[data-theme="dark"] {
+  /* Tema oscuro */
+  --bg-primary: #1a1a1a;
+  --bg-secondary: #2d2d2d;
+  --text-primary: #e0e0e0;
+  --text-secondary: #b0b0b0;
+  --border-color: #404040;
+  --shadow: rgba(0, 0, 0, 0.5);
+  --accent: #4a9eff;
+  --accent-hover: #6db3ff;
+}
+
+/* Aplicar variables globales */
+body {
+  background-color: var(--bg-primary);
+  color: var(--text-primary);
+  transition: background-color 0.3s ease, color 0.3s ease;
+}
+
+/* Sistema de tamaños de fuente responsivos */
+html {
+  font-size: 16px;
+}
+
+body {
+  font-size: calc(1rem * var(--font-size-multiplier));
+}
+
+h1 {
+  font-size: calc(2.5rem * var(--font-size-multiplier));
+}
+
+h2 {
+  font-size: calc(2rem * var(--font-size-multiplier));
+}
+
+h3 {
+  font-size: calc(1.75rem * var(--font-size-multiplier));
+}
+
+h4 {
+  font-size: calc(1.5rem * var(--font-size-multiplier));
+}
+
+h5 {
+  font-size: calc(1.25rem * var(--font-size-multiplier));
+}
+
+h6 {
+  font-size: calc(1rem * var(--font-size-multiplier));
+}
+
+p, li, span, label, input, button {
+  font-size: calc(1rem * var(--font-size-multiplier));
+}
+
+small {
+  font-size: calc(0.875rem * var(--font-size-multiplier));
+}
+
+/* Widget de accesibilidad */
+.accessibility-widget {
+  position: fixed;
+  top: 150px;
+  right: 0;
+  z-index: 99999;
+  transition: all 0.3s ease;
+}
+
+.widget-toggle {
+  width: 40px;
+  height: 80px;
+  border-radius: 8px 0 0 8px;
+  background: linear-gradient(135deg, var(--accent) 0%, var(--accent-hover) 100%);
+  color: white;
+  border: none;
+  cursor: pointer;
+  box-shadow: -2px 0 8px var(--shadow);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: all 0.3s ease;
+  font-size: 20px;
+  writing-mode: vertical-rl;
+  position: relative;
+}
+
+.widget-toggle::before {
+  content: 'Accesibilidad';
+  font-size: 11px;
+  letter-spacing: 1px;
+  writing-mode: vertical-rl;
+  text-orientation: mixed;
+}
+
+.widget-toggle .icon {
+  position: absolute;
+  font-size: 18px;
+  top: 10px;
+}
+
+.widget-toggle:hover {
+  background: linear-gradient(135deg, var(--accent-hover) 0%, var(--accent) 100%);
+  width: 45px;
+}
+
+.widget-toggle:focus {
+  outline: 3px solid var(--accent);
+  outline-offset: -3px;
+}
+
+.widget-panel {
+  position: absolute;
+  top: 0;
+  right: 40px;
+  width: 280px;
+  max-height: 400px;
+  background-color: var(--bg-primary);
+  border: 2px solid var(--border-color);
+  border-radius: 12px 0 0 12px;
+  box-shadow: -4px 0 16px var(--shadow);
+  padding: 20px;
+  transform: translateX(calc(100% + 40px));
+  opacity: 0;
+  pointer-events: none;
+  transition: all 0.3s cubic-bezier(0.68, -0.55, 0.265, 1.55);
+}
+
+.accessibility-widget.open .widget-panel {
+  transform: translateX(0);
+  opacity: 1;
+  pointer-events: all;
+}
+
+.panel-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 15px;
+  padding-bottom: 10px;
+  border-bottom: 2px solid var(--border-color);
+}
+
+.panel-header h3 {
+  margin: 0;
+  font-size: calc(1.1rem * var(--font-size-multiplier));
+  color: var(--text-primary);
+}
+
+.close-btn {
+  background: none;
+  border: none;
+  font-size: 24px;
+  color: var(--text-secondary);
+  cursor: pointer;
+  padding: 0;
+  width: 30px;
+  height: 30px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border-radius: 4px;
+  transition: all 0.2s ease;
+}
+
+.close-btn:hover {
+  background-color: var(--bg-secondary);
+  color: var(--text-primary);
+}
+
+.widget-section {
+  margin-bottom: 20px;
+  padding-bottom: 15px;
+  border-bottom: 1px solid var(--border-color);
+}
+
+.widget-section:last-child {
+  border-bottom: none;
+  margin-bottom: 0;
+}
+
+.widget-section label {
+  display: block;
+  font-weight: 600;
+  margin-bottom: 10px;
+  color: var(--text-primary);
+  font-size: calc(0.9rem * var(--font-size-multiplier));
+}
+
+.widget-button {
+  width: 100%;
+  padding: 12px;
+  background-color: var(--bg-secondary);
+  color: var(--text-primary);
+  border: 1px solid var(--border-color);
+  border-radius: 8px;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  transition: all 0.2s ease;
+  font-size: calc(1rem * var(--font-size-multiplier));
+}
+
+.widget-button:hover {
+  background-color: var(--accent);
+  color: white;
+  border-color: var(--accent);
+}
+
+.widget-button:focus {
+  outline: 2px solid var(--accent);
+  outline-offset: 2px;
+}
+
+.widget-button.small {
+  width: auto;
+  padding: 8px 16px;
+  font-weight: bold;
+}
+
+.widget-button-secondary {
+  width: 100%;
+  padding: 8px;
+  background-color: transparent;
+  color: var(--accent);
+  border: 1px solid var(--accent);
+  border-radius: 6px;
+  cursor: pointer;
+  margin-top: 8px;
+  transition: all 0.2s ease;
+  font-size: calc(0.9rem * var(--font-size-multiplier));
+}
+
+.widget-button-secondary:hover {
+  background-color: var(--accent);
+  color: white;
+}
+
+.font-controls {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 10px;
+  margin-bottom: 5px;
+}
+
+.font-indicator {
+  font-size: calc(0.75rem * var(--font-size-multiplier));
+  font-weight: bold;
+  color: var(--accent);
+  padding: 4px 8px;
+  background-color: var(--bg-secondary);
+  border-radius: 4px;
+  min-width: 70px;
+  text-align: center;
+}
+
+/* Estilos adicionales para elementos comunes */
+a {
+  color: var(--accent);
+  transition: color 0.2s ease;
+}
+
+a:hover {
+  color: var(--accent-hover);
+}
+
+button:not(.widget-button):not(.widget-toggle):not(.widget-button-secondary):not(.close-btn) {
+  background-color: var(--accent);
+  color: white;
+  border: none;
+  padding: 10px 20px;
+  border-radius: 6px;
+  cursor: pointer;
+  transition: all 0.2s ease;
+}
+
+button:not(.widget-button):not(.widget-toggle):not(.widget-button-secondary):not(.close-btn):hover {
+  background-color: var(--accent-hover);
+}
+
+input, textarea, select {
+  background-color: var(--bg-secondary);
+  color: var(--text-primary);
+  border: 1px solid var(--border-color);
+  padding: 8px 12px;
+  border-radius: 6px;
+  transition: all 0.2s ease;
+}
+
+input:focus, textarea:focus, select:focus {
+  outline: 2px solid var(--accent);
+  outline-offset: 2px;
+  border-color: var(--accent);
+}
+
+/* Responsive */
+@media (max-width: 768px) {
+  .accessibility-widget {
+    top: 120px;
+  }
+  
+  .widget-toggle {
+    width: 35px;
+    height: 60px;
+    font-size: 16px;
+  }
+  
+  .widget-toggle::before {
+    font-size: 9px;
+  }
+  
+  .widget-toggle .icon {
+    font-size: 14px;
+    top: 8px;
+  }
+  
+  .widget-panel {
+    width: calc(100vw - 70px);
+    max-width: 300px;
+    right: 35px;
+  }
+}

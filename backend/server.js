@@ -4,6 +4,9 @@ const cors = require('cors');
 const allRoutes = require('./routes/categoriasRoutes');
 const pool = require('./db/conexion');
 const path = require('path');
+const contactoRoutes = require('./routes/contactoRoutes');
+const suscripcionRoutes = require('./routes/suscripcionRoutes');
+
 
 const app = express();
 const PORT = process.env.PORT || 3000;
@@ -24,6 +27,12 @@ app.use((req, res, next) => {
 
 // Servir imágenes
 app.use('/uploads', express.static(path.join(__dirname, 'uploads')));
+app.use('/img', express.static('img')); // carpeta estática de main
+
+// Rutas de main
+app.use('/api/contacto', contactoRoutes);
+app.use('/api/suscripcion', suscripcionRoutes);
+
 
 // Todas las rutas en un solo archivo
 app.use('/api', allRoutes);
@@ -48,3 +57,4 @@ app.listen(PORT, async () => {
     console.log(`Servidor corriendo en http://localhost:${PORT}`);
     await testConnection();
 });
+ asi esta server.js
