@@ -6,6 +6,10 @@ const pool = require('./db/conexion');
 const path = require('path');
 const contactoRoutes = require('./routes/contactoRoutes');
 const suscripcionRoutes = require('./routes/suscripcionRoutes');
+const authRoutes = require('./routes/authRoutes');
+const ordenRoutes = require('./routes/ordenRoutes');
+
+
 
 
 const app = express();
@@ -33,9 +37,11 @@ app.use('/img', express.static('img')); // carpeta estática de main
 app.use('/api/contacto', contactoRoutes);
 app.use('/api/suscripcion', suscripcionRoutes);
 
+app.use('/api/auth', authRoutes);
 
 // Todas las rutas en un solo archivo
 app.use('/api', allRoutes);
+app.use('/api', ordenRoutes); //para api ordenes
 
 // Ruta de prueba básica
 app.get('/test', (req, res) => {
@@ -57,4 +63,4 @@ app.listen(PORT, async () => {
     console.log(`Servidor corriendo en http://localhost:${PORT}`);
     await testConnection();
 });
- asi esta server.js
+ 
