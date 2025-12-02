@@ -1,56 +1,19 @@
-// ------------------ DATOS EN MEMORIA ------------------
+// ------------------ CONFIG API + DATOS ------------------
 
-let products = [
-    {
-        id: 1,
-        name: "Thriller (Edición vinilo)",
-        artist: "Michael Jackson",
-        category: "vinilo",
-        price: 599,
-        stock: 8,
-        description: "Clásico en vinilo, portada original.",
-        image: ""
-    },
-    {
-        id: 2,
-        name: "Nevermind",
-        artist: "Nirvana",
-        category: "cd",
-        price: 349,
-        stock: 12,
-        description: "Edición CD remasterizada.",
-        image: ""
-    },
-    {
-        id: 3,
-        name: "Back in Black",
-        artist: "AC/DC",
-        category: "cassette",
-        price: 199,
-        stock: 5,
-        description: "Cassette clásico ochentero.",
-        image: ""
-    }
-];
+// Ajusta el puerto si tu backend usa otro
+const API_URL_PRODUCTS = "http://localhost:3000/api/productos";
 
-let nextId = 4;
-
-// ventas
+let products = [];   // vendrán de la BD
 let sales = [];
 let totalCompanySales = 0;
-
-// chart
 let salesChart = null;
 
 const categoryLabels = {
-    vinilo: "Vinilo",
-    cassette: "Cassette",
-    cd: "CD",
-    playera: "Playera",
-    poster: "Poster"
+    "guitarras": "Guitarras",
+    "guitarras-electricas": "Guitarras eléctricas",
+    "bajos": "Bajos",
+    "baterias": "Baterías"
 };
-
-// ------------------ INICIO ------------------
 
 document.addEventListener("DOMContentLoaded", () => {
     // elementos base
@@ -64,9 +27,9 @@ document.addEventListener("DOMContentLoaded", () => {
     const filterCategory = document.getElementById("filterCategory");
 
     const summaryTotal = document.getElementById("summary-total");
-    const summaryVinilos = document.getElementById("summary-vinilos");
-    const summaryCassettes = document.getElementById("summary-cassettes");
-    const summaryCds = document.getElementById("summary-cds");
+    const summaryGuitarras = document.getElementById("summary-guitarras");
+    const summaryBajos = document.getElementById("summary-bajos");
+    const summaryBaterias = document.getElementById("summary-baterias");
 
     const stockReportList = document.getElementById("stockReportList");
     const totalCompanySalesLabel = document.getElementById("totalCompanySales");
@@ -92,7 +55,7 @@ document.addEventListener("DOMContentLoaded", () => {
         ajustes: document.getElementById("section-ajustes")
     };
 
-    // -------------- LOGIN / LOGOUT (puntos 14, 22, 23) --------------
+    // -------------- LOGIN / LOGOUT --------------
 
     function refreshSessionUI() {
         const stored = localStorage.getItem("adminUser");
@@ -128,12 +91,9 @@ document.addEventListener("DOMContentLoaded", () => {
     menuButtons.forEach(btn => {
         btn.addEventListener("click", () => {
             const target = btn.getAttribute("data-section");
-
-            // activar botón
             menuButtons.forEach(b => b.classList.remove("active"));
             btn.classList.add("active");
 
-            // mostrar sección
             Object.keys(sections).forEach(key => {
                 sections[key].classList.remove("active");
             });
@@ -143,13 +103,28 @@ document.addEventListener("DOMContentLoaded", () => {
         });
     });
 
+    // -------------- UTILIDADES --------------
+
+    function formatCurrency(value) {
+        return new Intl.NumberFormat("es-MX", {
+            style: "currency",
+            currency: "MXN",
+            maximumFractionDigits: 0
+        }).format(Number(value));
+    }
+
+    function handleApiError(err) {
+        console.error("Error en API:", err);
+        alert("Ocurrió un error al comunicarse con el servidor.");
+    }
+
     // -------------- RESUMEN / REPORTES --------------
 
     function renderSummary() {
         summaryTotal.textContent = products.length;
-        summaryVinilos.textContent = products.filter(p => p.category === "vinilo").length;
-        summaryCassettes.textContent = products.filter(p => p.category === "cassette").length;
-        summaryCds.textContent = products.filter(p => p.category === "cd").length;
+        summaryGuitarras.textContent = products.filter(p => p.category === "guitarras").length;
+        summaryBajos.textContent = products.filter(p => p.category === "bajos").length;
+        summaryBaterias.textContent = products.filter(p => p.category === "baterias").length;
     }
 
     function renderStockReport() {
@@ -159,14 +134,14 @@ document.addEventListener("DOMContentLoaded", () => {
             if (!byCategory[p.category]) {
                 byCategory[p.category] = 0;
             }
-            byCategory[p.category] += p.stock;
+            byCategory[p.category] += Number(p.stock);
         });
 
         stockReportList.innerHTML = "";
 
         if (Object.keys(byCategory).length === 0) {
             const li = document.createElement("li");
-            li.textContent = "No hay productos registrados.";
+            li.textContent = "No hay instrumentos registrados.";
             stockReportList.appendChild(li);
             return;
         }
@@ -180,22 +155,10 @@ document.addEventListener("DOMContentLoaded", () => {
     }
 
     function renderTotalSales() {
-        totalCompanySalesLabel.textContent = new Intl.NumberFormat("es-MX", {
-            style: "currency",
-            currency: "MXN",
-            maximumFractionDigits: 0
-        }).format(totalCompanySales);
+        totalCompanySalesLabel.textContent = formatCurrency(totalCompanySales);
     }
 
-    // -------------- TABLA DE PRODUCTOS (altas, bajas, cambios) --------------
-
-    function formatCurrency(value) {
-        return new Intl.NumberFormat("es-MX", {
-            style: "currency",
-            currency: "MXN",
-            maximumFractionDigits: 0
-        }).format(value);
-    }
+    // -------------- TABLA DE PRODUCTOS --------------
 
     function renderProductsTable() {
         const searchTerm = searchInput.value.trim().toLowerCase();
@@ -204,7 +167,7 @@ document.addEventListener("DOMContentLoaded", () => {
         let filtered = products.filter(p => {
             const matchesSearch =
                 p.name.toLowerCase().includes(searchTerm) ||
-                p.artist.toLowerCase().includes(searchTerm);
+                p.brand.toLowerCase().includes(searchTerm);
 
             const matchesCategory =
                 selectedCategory === "todas" || p.category === selectedCategory;
@@ -221,7 +184,7 @@ document.addEventListener("DOMContentLoaded", () => {
 
             filtered.forEach(product => {
                 const tr = document.createElement("tr");
-                if (product.stock === 0) {
+                if (Number(product.stock) === 0) {
                     tr.classList.add("no-stock");
                 }
 
@@ -229,9 +192,9 @@ document.addEventListener("DOMContentLoaded", () => {
                 tdInfo.innerHTML = `
                     <div class="prod-info">
                         <div class="prod-main">${product.name}</div>
-                        <div class="prod-sub">${product.artist}</div>
+                        <div class="prod-sub">${product.brand}</div>
                         ${
-                            product.stock === 0
+                            Number(product.stock) === 0
                                 ? '<div class="no-stock-message">Por el momento este producto no está disponible</div>'
                                 : ""
                         }
@@ -241,9 +204,10 @@ document.addEventListener("DOMContentLoaded", () => {
                 const tdCategory = document.createElement("td");
                 const tag = document.createElement("span");
                 tag.classList.add("tag");
-                if (product.category === "vinilo") tag.classList.add("tag-vinilo");
-                if (product.category === "cassette") tag.classList.add("tag-cassette");
-                if (product.category === "cd") tag.classList.add("tag-cd");
+                if (product.category === "guitarras") tag.classList.add("tag-guitarras");
+                if (product.category === "guitarras-electricas") tag.classList.add("tag-guitarras-electricas");
+                if (product.category === "bajos") tag.classList.add("tag-bajos");
+                if (product.category === "baterias") tag.classList.add("tag-baterias");
                 tag.textContent = categoryLabels[product.category] || product.category;
                 tdCategory.appendChild(tag);
 
@@ -274,19 +238,18 @@ document.addEventListener("DOMContentLoaded", () => {
             });
         }
 
-        productsCounter.textContent = `${filtered.length} producto(s) en el catálogo.`;
+        productsCounter.textContent = `${filtered.length} instrumento(s) en el catálogo.`;
         renderSummary();
         renderStockReport();
         fillSaleSelect();
     }
 
-    // llenar select de ventas
     function fillSaleSelect() {
         saleProductSelect.innerHTML = "";
         if (products.length === 0) {
             const opt = document.createElement("option");
             opt.value = "";
-            opt.textContent = "No hay productos";
+            opt.textContent = "No hay instrumentos";
             saleProductSelect.appendChild(opt);
             return;
         }
@@ -299,7 +262,48 @@ document.addEventListener("DOMContentLoaded", () => {
         });
     }
 
-    // -------------- FORMULARIO PRODUCTO (alta / edición) --------------
+    // -------------- API PRODUCTS --------------
+
+    async function loadProductsFromApi() {
+        try {
+            const res = await fetch(API_URL_PRODUCTS);
+            if (!res.ok) throw new Error("Error al obtener productos");
+            products = await res.json();
+            renderProductsTable();
+        } catch (err) {
+            handleApiError(err);
+        }
+    }
+
+    async function createProductApi(payload) {
+        const res = await fetch(API_URL_PRODUCTS, {
+            method: "POST",
+            headers: { "Content-Type": "application/json" },
+            body: JSON.stringify(payload),
+        });
+        if (!res.ok) throw new Error("Error al crear producto");
+        return res.json();
+    }
+
+    async function updateProductApi(id, payload) {
+        const res = await fetch(`${API_URL_PRODUCTS}/${id}`, {
+            method: "PUT",
+            headers: { "Content-Type": "application/json" },
+            body: JSON.stringify(payload),
+        });
+        if (!res.ok) throw new Error("Error al actualizar producto");
+        return res.json();
+    }
+
+    async function deleteProductApi(id) {
+        const res = await fetch(`${API_URL_PRODUCTS}/${id}`, {
+            method: "DELETE",
+        });
+        if (!res.ok) throw new Error("Error al eliminar producto");
+        return res.json();
+    }
+
+    // -------------- FORMULARIO PRODUCTO --------------
 
     const editingIdInput = document.getElementById("editingId");
     const formTitle = document.getElementById("formTitle");
@@ -309,61 +313,41 @@ document.addEventListener("DOMContentLoaded", () => {
     function resetForm() {
         productForm.reset();
         editingIdInput.value = "";
-        formTitle.textContent = "Agregar producto";
-        formSubtitle.textContent = "Completa los campos para añadir un nuevo artículo al catálogo.";
+        formTitle.textContent = "Agregar instrumento";
+        formSubtitle.textContent = "Completa los campos para añadir un nuevo instrumento al catálogo.";
         submitLabel.textContent = "Guardar producto";
     }
 
-    productForm.addEventListener("submit", (e) => {
+    productForm.addEventListener("submit", async (e) => {
         e.preventDefault();
 
         const name = document.getElementById("name").value.trim();
-        const artist = document.getElementById("artist").value.trim();
+        const brand = document.getElementById("brand").value.trim();
         const category = document.getElementById("category").value;
         const price = parseFloat(document.getElementById("price").value);
         const stock = parseInt(document.getElementById("stock").value, 10);
         const image = document.getElementById("image").value.trim();
         const description = document.getElementById("description").value.trim();
 
-        if (!name || !artist || !category || isNaN(price) || isNaN(stock)) {
+        if (!name || !brand || !category || isNaN(price) || isNaN(stock)) {
             alert("Por favor completa todos los campos obligatorios.");
             return;
         }
 
+        const payload = { name, brand, category, price, stock, description, image };
         const editingId = editingIdInput.value;
 
-        if (editingId) {
-            // actualización (punto 17)
-            const id = parseInt(editingId, 10);
-            const index = products.findIndex(p => p.id === id);
-            if (index !== -1) {
-                products[index] = {
-                    ...products[index],
-                    name,
-                    artist,
-                    category,
-                    price,
-                    stock,
-                    image,
-                    description
-                };
+        try {
+            if (editingId) {
+                await updateProductApi(editingId, payload);
+            } else {
+                await createProductApi(payload);
             }
-        } else {
-            // alta (punto 15)
-            products.push({
-                id: nextId++,
-                name,
-                artist,
-                category,
-                price,
-                stock,
-                image,
-                description
-            });
+            resetForm();
+            await loadProductsFromApi();
+        } catch (err) {
+            handleApiError(err);
         }
-
-        resetForm();
-        renderProductsTable();
     });
 
     resetFormBtn.addEventListener("click", () => {
@@ -374,33 +358,39 @@ document.addEventListener("DOMContentLoaded", () => {
         productForm.scrollIntoView({ behavior: "smooth", block: "start" });
     });
 
-    // eliminar / editar desde la tabla (puntos 16 y 17)
-    productsTableBody.addEventListener("click", (e) => {
+    // editar / eliminar desde tabla
+    productsTableBody.addEventListener("click", async (e) => {
         const deleteBtn = e.target.closest(".btn-delete");
         const editBtn = e.target.closest(".btn-edit");
 
         if (deleteBtn) {
-            const id = parseInt(deleteBtn.dataset.id, 10);
-            products = products.filter(p => p.id !== id);
-            renderProductsTable();
+            const id = deleteBtn.dataset.id;
+            if (!confirm("¿Seguro que deseas eliminar este instrumento?")) return;
+
+            try {
+                await deleteProductApi(id);
+                await loadProductsFromApi();
+            } catch (err) {
+                handleApiError(err);
+            }
             return;
         }
 
         if (editBtn) {
-            const id = parseInt(editBtn.dataset.id, 10);
-            const product = products.find(p => p.id === id);
+            const id = editBtn.dataset.id;
+            const product = products.find(p => String(p.id) === String(id));
             if (!product) return;
 
             editingIdInput.value = product.id;
             document.getElementById("name").value = product.name;
-            document.getElementById("artist").value = product.artist;
+            document.getElementById("brand").value = product.brand;
             document.getElementById("category").value = product.category;
             document.getElementById("price").value = product.price;
             document.getElementById("stock").value = product.stock;
             document.getElementById("image").value = product.image || "";
             document.getElementById("description").value = product.description || "";
 
-            formTitle.textContent = "Editar producto";
+            formTitle.textContent = "Editar instrumento";
             formSubtitle.textContent = "Modifica los campos y guarda para ver los cambios en la tabla.";
             submitLabel.textContent = "Actualizar producto";
 
@@ -412,7 +402,7 @@ document.addEventListener("DOMContentLoaded", () => {
     searchInput.addEventListener("input", renderProductsTable);
     filterCategory.addEventListener("change", renderProductsTable);
 
-    // -------------- VENTAS (puntos 18, 19, 20, 21) --------------
+    // -------------- VENTAS (siguen en memoria) --------------
 
     function renderSalesTable() {
         salesTableBody.innerHTML = "";
@@ -456,7 +446,7 @@ document.addEventListener("DOMContentLoaded", () => {
                 labels: [],
                 datasets: [
                     {
-                        label: "Ventas por producto (MXN)",
+                        label: "Ventas por instrumento (MXN)",
                         data: []
                     }
                 ]
@@ -464,9 +454,7 @@ document.addEventListener("DOMContentLoaded", () => {
             options: {
                 responsive: true,
                 scales: {
-                    y: {
-                        beginAtZero: true
-                    }
+                    y: { beginAtZero: true }
                 }
             }
         });
@@ -494,22 +482,20 @@ document.addEventListener("DOMContentLoaded", () => {
         const productId = parseInt(saleProductSelect.value, 10);
         const quantity = parseInt(saleQuantityInput.value, 10);
 
-        const product = products.find(p => p.id === productId);
+        const product = products.find(p => Number(p.id) === productId);
         if (!product) {
-            alert("Selecciona un producto válido.");
+            alert("Selecciona un instrumento válido.");
             return;
         }
 
-        if (product.stock === 0 || quantity > product.stock) {
-            // comportamiento cuando stock = 0 (punto 21)
+        if (Number(product.stock) === 0 || quantity > Number(product.stock)) {
             alert("Por el momento este producto no está disponible o no hay stock suficiente.");
             return;
         }
 
-        // reducir inventario
-        product.stock -= quantity;
+        product.stock = Number(product.stock) - quantity;
 
-        const total = product.price * quantity;
+        const total = Number(product.price) * quantity;
         totalCompanySales += total;
 
         sales.push({
@@ -530,7 +516,7 @@ document.addEventListener("DOMContentLoaded", () => {
     // -------------- INICIALIZACIÓN --------------
 
     initChart();
-    renderProductsTable();
     renderSalesTable();
     renderTotalSales();
+    loadProductsFromApi(); // 👈 carga desde la BD al arrancar
 });
