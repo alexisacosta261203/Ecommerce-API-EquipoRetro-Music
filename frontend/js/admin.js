@@ -1,35 +1,36 @@
-// ------------------ DATOS EN MEMORIA ------------------
+// ------------------ DATOS EN MEMORIA (INSTRUMENTOS) ------------------
 
+// Datos de ejemplo para que la vista se vea similar a tus tarjetas de tienda
 let products = [
     {
         id: 1,
-        name: "Thriller (Edición vinilo)",
-        artist: "Michael Jackson",
-        category: "vinilo",
-        price: 599,
-        stock: 8,
-        description: "Clásico en vinilo, portada original.",
-        image: ""
+        name: "Fender Edición limitada California Vintage Malibu",
+        brand: "Fender",
+        category: "guitarras",
+        price: 19999,
+        stock: 6,
+        description: "Guitarra acústica de concierto Malibu con tapa de abeto y fondo de caoba.",
+        image: "",
     },
     {
         id: 2,
-        name: "Nevermind",
-        artist: "Nirvana",
-        category: "cd",
-        price: 349,
-        stock: 12,
-        description: "Edición CD remasterizada.",
-        image: ""
+        name: "Fender Malibu Special Mahogany",
+        brand: "Fender",
+        category: "guitarras",
+        price: 13179,
+        stock: 4,
+        description: "Cuerpo de caoba, sonido cálido y cómodo para tocar.",
+        image: "",
     },
     {
         id: 3,
-        name: "Back in Black",
-        artist: "AC/DC",
-        category: "cassette",
-        price: 199,
-        stock: 5,
-        description: "Cassette clásico ochentero.",
-        image: ""
+        name: "Fender Guitarra Electroacústica Fa-25ce",
+        brand: "Fender",
+        category: "guitarras-electricas",
+        price: 3499,
+        stock: 10,
+        description: "Electroacústica ideal para escenario y práctica en casa.",
+        image: "",
     }
 ];
 
@@ -43,14 +44,11 @@ let totalCompanySales = 0;
 let salesChart = null;
 
 const categoryLabels = {
-    vinilo: "Vinilo",
-    cassette: "Cassette",
-    cd: "CD",
-    playera: "Playera",
-    poster: "Poster"
+    "guitarras": "Guitarras",
+    "guitarras-electricas": "Guitarras eléctricas",
+    "bajos": "Bajos",
+    "baterias": "Baterías"
 };
-
-// ------------------ INICIO ------------------
 
 document.addEventListener("DOMContentLoaded", () => {
     // elementos base
@@ -64,9 +62,9 @@ document.addEventListener("DOMContentLoaded", () => {
     const filterCategory = document.getElementById("filterCategory");
 
     const summaryTotal = document.getElementById("summary-total");
-    const summaryVinilos = document.getElementById("summary-vinilos");
-    const summaryCassettes = document.getElementById("summary-cassettes");
-    const summaryCds = document.getElementById("summary-cds");
+    const summaryGuitarras = document.getElementById("summary-guitarras");
+    const summaryBajos = document.getElementById("summary-bajos");
+    const summaryBaterias = document.getElementById("summary-baterias");
 
     const stockReportList = document.getElementById("stockReportList");
     const totalCompanySalesLabel = document.getElementById("totalCompanySales");
@@ -92,7 +90,7 @@ document.addEventListener("DOMContentLoaded", () => {
         ajustes: document.getElementById("section-ajustes")
     };
 
-    // -------------- LOGIN / LOGOUT (puntos 14, 22, 23) --------------
+    // -------------- LOGIN / LOGOUT --------------
 
     function refreshSessionUI() {
         const stored = localStorage.getItem("adminUser");
@@ -128,12 +126,9 @@ document.addEventListener("DOMContentLoaded", () => {
     menuButtons.forEach(btn => {
         btn.addEventListener("click", () => {
             const target = btn.getAttribute("data-section");
-
-            // activar botón
             menuButtons.forEach(b => b.classList.remove("active"));
             btn.classList.add("active");
 
-            // mostrar sección
             Object.keys(sections).forEach(key => {
                 sections[key].classList.remove("active");
             });
@@ -143,13 +138,23 @@ document.addEventListener("DOMContentLoaded", () => {
         });
     });
 
+    // -------------- UTILIDADES --------------
+
+    function formatCurrency(value) {
+        return new Intl.NumberFormat("es-MX", {
+            style: "currency",
+            currency: "MXN",
+            maximumFractionDigits: 0
+        }).format(value);
+    }
+
     // -------------- RESUMEN / REPORTES --------------
 
     function renderSummary() {
         summaryTotal.textContent = products.length;
-        summaryVinilos.textContent = products.filter(p => p.category === "vinilo").length;
-        summaryCassettes.textContent = products.filter(p => p.category === "cassette").length;
-        summaryCds.textContent = products.filter(p => p.category === "cd").length;
+        summaryGuitarras.textContent = products.filter(p => p.category === "guitarras").length;
+        summaryBajos.textContent = products.filter(p => p.category === "bajos").length;
+        summaryBaterias.textContent = products.filter(p => p.category === "baterias").length;
     }
 
     function renderStockReport() {
@@ -166,7 +171,7 @@ document.addEventListener("DOMContentLoaded", () => {
 
         if (Object.keys(byCategory).length === 0) {
             const li = document.createElement("li");
-            li.textContent = "No hay productos registrados.";
+            li.textContent = "No hay instrumentos registrados.";
             stockReportList.appendChild(li);
             return;
         }
@@ -180,22 +185,10 @@ document.addEventListener("DOMContentLoaded", () => {
     }
 
     function renderTotalSales() {
-        totalCompanySalesLabel.textContent = new Intl.NumberFormat("es-MX", {
-            style: "currency",
-            currency: "MXN",
-            maximumFractionDigits: 0
-        }).format(totalCompanySales);
+        totalCompanySalesLabel.textContent = formatCurrency(totalCompanySales);
     }
 
-    // -------------- TABLA DE PRODUCTOS (altas, bajas, cambios) --------------
-
-    function formatCurrency(value) {
-        return new Intl.NumberFormat("es-MX", {
-            style: "currency",
-            currency: "MXN",
-            maximumFractionDigits: 0
-        }).format(value);
-    }
+    // -------------- TABLA DE PRODUCTOS --------------
 
     function renderProductsTable() {
         const searchTerm = searchInput.value.trim().toLowerCase();
@@ -204,7 +197,7 @@ document.addEventListener("DOMContentLoaded", () => {
         let filtered = products.filter(p => {
             const matchesSearch =
                 p.name.toLowerCase().includes(searchTerm) ||
-                p.artist.toLowerCase().includes(searchTerm);
+                p.brand.toLowerCase().includes(searchTerm);
 
             const matchesCategory =
                 selectedCategory === "todas" || p.category === selectedCategory;
@@ -229,7 +222,7 @@ document.addEventListener("DOMContentLoaded", () => {
                 tdInfo.innerHTML = `
                     <div class="prod-info">
                         <div class="prod-main">${product.name}</div>
-                        <div class="prod-sub">${product.artist}</div>
+                        <div class="prod-sub">${product.brand}</div>
                         ${
                             product.stock === 0
                                 ? '<div class="no-stock-message">Por el momento este producto no está disponible</div>'
@@ -241,9 +234,10 @@ document.addEventListener("DOMContentLoaded", () => {
                 const tdCategory = document.createElement("td");
                 const tag = document.createElement("span");
                 tag.classList.add("tag");
-                if (product.category === "vinilo") tag.classList.add("tag-vinilo");
-                if (product.category === "cassette") tag.classList.add("tag-cassette");
-                if (product.category === "cd") tag.classList.add("tag-cd");
+                if (product.category === "guitarras") tag.classList.add("tag-guitarras");
+                if (product.category === "guitarras-electricas") tag.classList.add("tag-guitarras-electricas");
+                if (product.category === "bajos") tag.classList.add("tag-bajos");
+                if (product.category === "baterias") tag.classList.add("tag-baterias");
                 tag.textContent = categoryLabels[product.category] || product.category;
                 tdCategory.appendChild(tag);
 
@@ -274,19 +268,18 @@ document.addEventListener("DOMContentLoaded", () => {
             });
         }
 
-        productsCounter.textContent = `${filtered.length} producto(s) en el catálogo.`;
+        productsCounter.textContent = `${filtered.length} instrumento(s) en el catálogo.`;
         renderSummary();
         renderStockReport();
         fillSaleSelect();
     }
 
-    // llenar select de ventas
     function fillSaleSelect() {
         saleProductSelect.innerHTML = "";
         if (products.length === 0) {
             const opt = document.createElement("option");
             opt.value = "";
-            opt.textContent = "No hay productos";
+            opt.textContent = "No hay instrumentos";
             saleProductSelect.appendChild(opt);
             return;
         }
@@ -299,7 +292,7 @@ document.addEventListener("DOMContentLoaded", () => {
         });
     }
 
-    // -------------- FORMULARIO PRODUCTO (alta / edición) --------------
+    // -------------- FORMULARIO PRODUCTO --------------
 
     const editingIdInput = document.getElementById("editingId");
     const formTitle = document.getElementById("formTitle");
@@ -309,8 +302,8 @@ document.addEventListener("DOMContentLoaded", () => {
     function resetForm() {
         productForm.reset();
         editingIdInput.value = "";
-        formTitle.textContent = "Agregar producto";
-        formSubtitle.textContent = "Completa los campos para añadir un nuevo artículo al catálogo.";
+        formTitle.textContent = "Agregar instrumento";
+        formSubtitle.textContent = "Completa los campos para añadir un nuevo instrumento al catálogo.";
         submitLabel.textContent = "Guardar producto";
     }
 
@@ -318,14 +311,14 @@ document.addEventListener("DOMContentLoaded", () => {
         e.preventDefault();
 
         const name = document.getElementById("name").value.trim();
-        const artist = document.getElementById("artist").value.trim();
+        const brand = document.getElementById("brand").value.trim();
         const category = document.getElementById("category").value;
         const price = parseFloat(document.getElementById("price").value);
         const stock = parseInt(document.getElementById("stock").value, 10);
         const image = document.getElementById("image").value.trim();
         const description = document.getElementById("description").value.trim();
 
-        if (!name || !artist || !category || isNaN(price) || isNaN(stock)) {
+        if (!name || !brand || !category || isNaN(price) || isNaN(stock)) {
             alert("Por favor completa todos los campos obligatorios.");
             return;
         }
@@ -333,14 +326,13 @@ document.addEventListener("DOMContentLoaded", () => {
         const editingId = editingIdInput.value;
 
         if (editingId) {
-            // actualización (punto 17)
             const id = parseInt(editingId, 10);
             const index = products.findIndex(p => p.id === id);
             if (index !== -1) {
                 products[index] = {
                     ...products[index],
                     name,
-                    artist,
+                    brand,
                     category,
                     price,
                     stock,
@@ -349,11 +341,10 @@ document.addEventListener("DOMContentLoaded", () => {
                 };
             }
         } else {
-            // alta (punto 15)
             products.push({
                 id: nextId++,
                 name,
-                artist,
+                brand,
                 category,
                 price,
                 stock,
@@ -374,13 +365,14 @@ document.addEventListener("DOMContentLoaded", () => {
         productForm.scrollIntoView({ behavior: "smooth", block: "start" });
     });
 
-    // eliminar / editar desde la tabla (puntos 16 y 17)
+    // editar / eliminar desde tabla
     productsTableBody.addEventListener("click", (e) => {
         const deleteBtn = e.target.closest(".btn-delete");
         const editBtn = e.target.closest(".btn-edit");
 
         if (deleteBtn) {
             const id = parseInt(deleteBtn.dataset.id, 10);
+            if (!confirm("¿Seguro que deseas eliminar este instrumento?")) return;
             products = products.filter(p => p.id !== id);
             renderProductsTable();
             return;
@@ -393,14 +385,14 @@ document.addEventListener("DOMContentLoaded", () => {
 
             editingIdInput.value = product.id;
             document.getElementById("name").value = product.name;
-            document.getElementById("artist").value = product.artist;
+            document.getElementById("brand").value = product.brand;
             document.getElementById("category").value = product.category;
             document.getElementById("price").value = product.price;
             document.getElementById("stock").value = product.stock;
             document.getElementById("image").value = product.image || "";
             document.getElementById("description").value = product.description || "";
 
-            formTitle.textContent = "Editar producto";
+            formTitle.textContent = "Editar instrumento";
             formSubtitle.textContent = "Modifica los campos y guarda para ver los cambios en la tabla.";
             submitLabel.textContent = "Actualizar producto";
 
@@ -412,7 +404,7 @@ document.addEventListener("DOMContentLoaded", () => {
     searchInput.addEventListener("input", renderProductsTable);
     filterCategory.addEventListener("change", renderProductsTable);
 
-    // -------------- VENTAS (puntos 18, 19, 20, 21) --------------
+    // -------------- VENTAS --------------
 
     function renderSalesTable() {
         salesTableBody.innerHTML = "";
@@ -456,7 +448,7 @@ document.addEventListener("DOMContentLoaded", () => {
                 labels: [],
                 datasets: [
                     {
-                        label: "Ventas por producto (MXN)",
+                        label: "Ventas por instrumento (MXN)",
                         data: []
                     }
                 ]
@@ -496,17 +488,15 @@ document.addEventListener("DOMContentLoaded", () => {
 
         const product = products.find(p => p.id === productId);
         if (!product) {
-            alert("Selecciona un producto válido.");
+            alert("Selecciona un instrumento válido.");
             return;
         }
 
         if (product.stock === 0 || quantity > product.stock) {
-            // comportamiento cuando stock = 0 (punto 21)
             alert("Por el momento este producto no está disponible o no hay stock suficiente.");
             return;
         }
 
-        // reducir inventario
         product.stock -= quantity;
 
         const total = product.price * quantity;
