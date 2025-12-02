@@ -1,46 +1,11 @@
-// ------------------ DATOS EN MEMORIA (INSTRUMENTOS) ------------------
+// ------------------ CONFIG API + DATOS ------------------
 
-// Datos de ejemplo para que la vista se vea similar a tus tarjetas de tienda
-let products = [
-    {
-        id: 1,
-        name: "Fender Edición limitada California Vintage Malibu",
-        brand: "Fender",
-        category: "guitarras",
-        price: 19999,
-        stock: 6,
-        description: "Guitarra acústica de concierto Malibu con tapa de abeto y fondo de caoba.",
-        image: "",
-    },
-    {
-        id: 2,
-        name: "Fender Malibu Special Mahogany",
-        brand: "Fender",
-        category: "guitarras",
-        price: 13179,
-        stock: 4,
-        description: "Cuerpo de caoba, sonido cálido y cómodo para tocar.",
-        image: "",
-    },
-    {
-        id: 3,
-        name: "Fender Guitarra Electroacústica Fa-25ce",
-        brand: "Fender",
-        category: "guitarras-electricas",
-        price: 3499,
-        stock: 10,
-        description: "Electroacústica ideal para escenario y práctica en casa.",
-        image: "",
-    }
-];
+// Ajusta el puerto si tu backend usa otro
+const API_URL_PRODUCTS = "http://localhost:3000/api/productos";
 
-let nextId = 4;
-
-// ventas
+let products = [];   // vendrán de la BD
 let sales = [];
 let totalCompanySales = 0;
-
-// chart
 let salesChart = null;
 
 const categoryLabels = {
@@ -145,7 +110,12 @@ document.addEventListener("DOMContentLoaded", () => {
             style: "currency",
             currency: "MXN",
             maximumFractionDigits: 0
-        }).format(value);
+        }).format(Number(value));
+    }
+
+    function handleApiError(err) {
+        console.error("Error en API:", err);
+        alert("Ocurrió un error al comunicarse con el servidor.");
     }
 
     // -------------- RESUMEN / REPORTES --------------
@@ -164,7 +134,7 @@ document.addEventListener("DOMContentLoaded", () => {
             if (!byCategory[p.category]) {
                 byCategory[p.category] = 0;
             }
-            byCategory[p.category] += p.stock;
+            byCategory[p.category] += Number(p.stock);
         });
 
         stockReportList.innerHTML = "";
@@ -214,7 +184,7 @@ document.addEventListener("DOMContentLoaded", () => {
 
             filtered.forEach(product => {
                 const tr = document.createElement("tr");
-                if (product.stock === 0) {
+                if (Number(product.stock) === 0) {
                     tr.classList.add("no-stock");
                 }
 
@@ -224,7 +194,7 @@ document.addEventListener("DOMContentLoaded", () => {
                         <div class="prod-main">${product.name}</div>
                         <div class="prod-sub">${product.brand}</div>
                         ${
-                            product.stock === 0
+                            Number(product.stock) === 0
                                 ? '<div class="no-stock-message">Por el momento este producto no está disponible</div>'
                                 : ""
                         }
@@ -292,6 +262,47 @@ document.addEventListener("DOMContentLoaded", () => {
         });
     }
 
+    // -------------- API PRODUCTS --------------
+
+    async function loadProductsFromApi() {
+        try {
+            const res = await fetch(API_URL_PRODUCTS);
+            if (!res.ok) throw new Error("Error al obtener productos");
+            products = await res.json();
+            renderProductsTable();
+        } catch (err) {
+            handleApiError(err);
+        }
+    }
+
+    async function createProductApi(payload) {
+        const res = await fetch(API_URL_PRODUCTS, {
+            method: "POST",
+            headers: { "Content-Type": "application/json" },
+            body: JSON.stringify(payload),
+        });
+        if (!res.ok) throw new Error("Error al crear producto");
+        return res.json();
+    }
+
+    async function updateProductApi(id, payload) {
+        const res = await fetch(`${API_URL_PRODUCTS}/${id}`, {
+            method: "PUT",
+            headers: { "Content-Type": "application/json" },
+            body: JSON.stringify(payload),
+        });
+        if (!res.ok) throw new Error("Error al actualizar producto");
+        return res.json();
+    }
+
+    async function deleteProductApi(id) {
+        const res = await fetch(`${API_URL_PRODUCTS}/${id}`, {
+            method: "DELETE",
+        });
+        if (!res.ok) throw new Error("Error al eliminar producto");
+        return res.json();
+    }
+
     // -------------- FORMULARIO PRODUCTO --------------
 
     const editingIdInput = document.getElementById("editingId");
@@ -307,7 +318,7 @@ document.addEventListener("DOMContentLoaded", () => {
         submitLabel.textContent = "Guardar producto";
     }
 
-    productForm.addEventListener("submit", (e) => {
+    productForm.addEventListener("submit", async (e) => {
         e.preventDefault();
 
         const name = document.getElementById("name").value.trim();
@@ -323,38 +334,20 @@ document.addEventListener("DOMContentLoaded", () => {
             return;
         }
 
+        const payload = { name, brand, category, price, stock, description, image };
         const editingId = editingIdInput.value;
 
-        if (editingId) {
-            const id = parseInt(editingId, 10);
-            const index = products.findIndex(p => p.id === id);
-            if (index !== -1) {
-                products[index] = {
-                    ...products[index],
-                    name,
-                    brand,
-                    category,
-                    price,
-                    stock,
-                    image,
-                    description
-                };
+        try {
+            if (editingId) {
+                await updateProductApi(editingId, payload);
+            } else {
+                await createProductApi(payload);
             }
-        } else {
-            products.push({
-                id: nextId++,
-                name,
-                brand,
-                category,
-                price,
-                stock,
-                image,
-                description
-            });
+            resetForm();
+            await loadProductsFromApi();
+        } catch (err) {
+            handleApiError(err);
         }
-
-        resetForm();
-        renderProductsTable();
     });
 
     resetFormBtn.addEventListener("click", () => {
@@ -366,21 +359,26 @@ document.addEventListener("DOMContentLoaded", () => {
     });
 
     // editar / eliminar desde tabla
-    productsTableBody.addEventListener("click", (e) => {
+    productsTableBody.addEventListener("click", async (e) => {
         const deleteBtn = e.target.closest(".btn-delete");
         const editBtn = e.target.closest(".btn-edit");
 
         if (deleteBtn) {
-            const id = parseInt(deleteBtn.dataset.id, 10);
+            const id = deleteBtn.dataset.id;
             if (!confirm("¿Seguro que deseas eliminar este instrumento?")) return;
-            products = products.filter(p => p.id !== id);
-            renderProductsTable();
+
+            try {
+                await deleteProductApi(id);
+                await loadProductsFromApi();
+            } catch (err) {
+                handleApiError(err);
+            }
             return;
         }
 
         if (editBtn) {
-            const id = parseInt(editBtn.dataset.id, 10);
-            const product = products.find(p => p.id === id);
+            const id = editBtn.dataset.id;
+            const product = products.find(p => String(p.id) === String(id));
             if (!product) return;
 
             editingIdInput.value = product.id;
@@ -404,7 +402,7 @@ document.addEventListener("DOMContentLoaded", () => {
     searchInput.addEventListener("input", renderProductsTable);
     filterCategory.addEventListener("change", renderProductsTable);
 
-    // -------------- VENTAS --------------
+    // -------------- VENTAS (siguen en memoria) --------------
 
     function renderSalesTable() {
         salesTableBody.innerHTML = "";
@@ -456,9 +454,7 @@ document.addEventListener("DOMContentLoaded", () => {
             options: {
                 responsive: true,
                 scales: {
-                    y: {
-                        beginAtZero: true
-                    }
+                    y: { beginAtZero: true }
                 }
             }
         });
@@ -486,20 +482,20 @@ document.addEventListener("DOMContentLoaded", () => {
         const productId = parseInt(saleProductSelect.value, 10);
         const quantity = parseInt(saleQuantityInput.value, 10);
 
-        const product = products.find(p => p.id === productId);
+        const product = products.find(p => Number(p.id) === productId);
         if (!product) {
             alert("Selecciona un instrumento válido.");
             return;
         }
 
-        if (product.stock === 0 || quantity > product.stock) {
+        if (Number(product.stock) === 0 || quantity > Number(product.stock)) {
             alert("Por el momento este producto no está disponible o no hay stock suficiente.");
             return;
         }
 
-        product.stock -= quantity;
+        product.stock = Number(product.stock) - quantity;
 
-        const total = product.price * quantity;
+        const total = Number(product.price) * quantity;
         totalCompanySales += total;
 
         sales.push({
@@ -520,7 +516,7 @@ document.addEventListener("DOMContentLoaded", () => {
     // -------------- INICIALIZACIÓN --------------
 
     initChart();
-    renderProductsTable();
     renderSalesTable();
     renderTotalSales();
+    loadProductsFromApi(); // 👈 carga desde la BD al arrancar
 });
