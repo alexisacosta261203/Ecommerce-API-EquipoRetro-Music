@@ -1,0 +1,502 @@
+/* ============================================
+   INICIO ESTILOS DANNA MAJHLI AVALOS SANTOS
+   ============================================ */
+   
+/****** ESTILOS PARA FORMULARIO DE CONTACTO *******/
+body {
+    background-image: url("../img/fondo.jpg");
+    background-size: cover;     
+    background-repeat: no-repeat; 
+    background-position: center; 
+    font-family: Arial, sans-serif;
+    margin: 0;
+    padding: 0;
+    /* Usar variables de accesibilidad */
+    background-color: var(--bg-primary);
+    color: var(--text-primary);
+}
+
+.container {
+    width: 100%;
+    min-height: 100vh;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
+
+.form {
+    width: 350px;
+    padding: 25px;
+    border-radius: 15px;
+    background-image: url("../img/fondocontacto.jpg");
+    background-size: cover;        
+    background-repeat: no-repeat;  
+    background-position: center;   
+    color: var(--text-primary);
+    background-color: var(--bg-secondary);
+    box-shadow: 0 4px 15px var(--shadow);
+}
+
+.form input,
+.form textarea,
+.form button {
+    width: 90%;           
+    max-width: 300px;     
+    margin: 10px auto;    
+    display: block;      
+}
+
+.form h2 {
+    text-align: center;
+    margin-bottom: 20px;
+    color: var(--text-primary);
+}
+
+.form label {
+    font-weight: bold;
+    display: block;
+    margin-top: 15px;
+    color: var(--text-secondary);
+}
+
+.form input,
+.form textarea {
+    width: 100%;
+    padding: 10px;
+    margin-top: 5px;
+    border-radius: 8px;
+    border: 1px solid var(--border-color);
+    font-size: 14px;
+    outline: none;
+    transition: border-color 0.3s;
+    background-color: var(--bg-primary);
+    color: var(--text-primary);
+}
+
+.form input:focus,
+.form textarea:focus {
+    border-color: var(--accent);
+}
+
+.form textarea {
+    height: 100px;
+    resize: none;
+}
+
+.form button {
+    width: 100%;
+    background: #388390;
+    color: white;
+    padding: 12px 0;
+    border: none;
+    border-radius: 8px;
+    font-size: 16px;
+    margin-top: 20px;
+    cursor: pointer;
+    transition: background 0.3s;
+}
+
+.form button:hover {
+    background: #5f34d6;
+}
+
+#resultado {
+    text-align: center;
+    margin-top: 15px;
+}
+
+.mensaje-exito {
+    color: #28a745;
+    font-weight: bold;
+}
+
+.mensaje-error {
+    color: #ff0000; 
+    font-weight: bold;
+}
+
+/******** SEPARACION PARA ESTILOS DE SUSCRIPCION **********/
+#formSuscripcion button {
+    background: #28a745;
+}
+
+#formSuscripcion button:hover {
+    background: #1e7e34;
+}
+
+#resultadoSus {
+    margin-top: 10px;
+    text-align: center;
+    font-weight: bold;
+}
+
+#formSuscripcion label {
+    color: var(--text-secondary);
+    font-weight: bold;
+}
+
+#formSuscripcion {
+    background-image: url("../img/fondosuscripcion.jpg");
+    background-size: cover;
+    background-repeat: no-repeat;
+    background-position: center;
+    background-color: var(--bg-secondary);
+    color: var(--text-primary);
+}
+
+#resultadoSus {
+    text-align: center;
+    margin-top: 10px;
+    font-weight: bold;
+}
+
+/* Sección de suscripción */
+.cta-suscripcion {
+    background-image: url("../img/fondo.jpg");
+    text-align: center;
+    padding: 40px 20px;
+    margin-bottom: 20px;
+    background-color: var(--bg-secondary);
+}
+
+.cta-suscripcion h2 {
+    font-size: 20px;
+    margin-bottom: 20px;
+    color: #ac5be2;
+}
+
+.btn-suscribete {
+    display: inline-block;
+    background-color: #28a745;
+    color: #fff;
+    padding: 12px 25px;
+    border-radius: 8px;
+    text-decoration: none;
+    font-weight: bold;
+    transition: background 0.3s;
+}
+
+.btn-suscribete:hover {
+    background-color: #1e7e34;
+}
+
+/******** SEPARACION PARA ESTILOS DE PAGINA PRINCIPAL **********/
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+}
+
+.top-header {
+    width: 100%;
+    padding: 15px 30px;
+    background: var(--bg-primary);
+    display: flex;
+    justify-content: space-between; 
+    align-items: center;
+    position: relative;
+    box-shadow: 0 2px 5px var(--shadow);
+}
+
+.logo-derecha {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+}
+
+.logo-img {
+    width: 90px;
+    height: 80px;
+}
+
+.logo-text {
+    font-size: 26px;
+    font-weight: bold;
+}
+
+.retro {
+    color: #8e44ff; 
+}
+
+.music {
+    color: var(--text-primary);
+}
+
+.menu-derecha ul {
+    display: flex;
+    list-style: none;
+    gap: 25px;
+}
+
+.menu-derecha ul li a {
+    text-decoration: none;
+    color: var(--text-primary);
+    font-weight: bold;
+    transition: 0.3s;
+}
+
+.menu-derecha ul li a:hover {
+    color: #7f00ff;
+}
+
+.hero {
+    height: 300px;
+    background: 
+        linear-gradient(rgba(0,0,0,0.6), rgba(0,0,0,0.6)),
+        url('https://images.unsplash.com/photo-1511379938547-c1f69419868d?ixlib=rb-1.2.1&auto=format&fit=crop&w=1350&q=80');
+    background-size: cover;
+    background-position: center;
+    padding: 70px 20px; 
+    text-align: center;
+    color: white;
+    margin-top: 0;
+}
+
+.hero h1 {
+    font-size: 45px;
+    font-weight: bold;
+    text-shadow: 2px 2px 4px rgba(0,0,0,0.5);
+}
+
+@media (max-width: 768px) {
+    .top-header {
+        flex-direction: column;
+        gap: 15px;
+    }
+
+    .menu-derecha ul {
+        flex-direction: column;
+        gap: 10px;
+    }
+
+    .hero h1 {
+        font-size: 32px;
+    }
+}
+
+.footer {
+    background: var(--bg-secondary);
+    color: var(--text-primary);
+    padding: 40px 20px 20px;
+    margin-top: 50px;
+    border-top: 2px solid var(--border-color);
+}
+
+.footer-container {
+    max-width: 1200px;
+    margin: auto;
+    display: flex;
+    justify-content: space-between;
+    align-items: flex-start;
+    flex-wrap: wrap;
+    gap: 30px;
+}
+
+.footer-brand h2 {
+    font-size: 28px;
+    font-weight: bold;
+}
+
+.footer-brand .retro {
+    color: #8e44ff; 
+}
+
+.footer-brand .music {
+    color: var(--text-primary);
+}
+
+.footer-brand p {
+    max-width: 320px;
+    margin-top: 10px;
+    color: var(--text-secondary);
+    line-height: 1.5;
+}
+
+.footer-links {
+    display: flex;
+    flex-direction: column;
+    gap: 12px;
+}
+
+.footer-links a {
+    color: var(--text-secondary);
+    text-decoration: none;
+    font-weight: 500;
+    transition: 0.3s;
+}
+
+.footer-links a:hover {
+    color: #8e44ff;
+}
+
+.footer-bottom {
+    text-align: center;
+    margin-top: 25px;
+    padding-top: 15px;
+    border-top: 1px solid var(--border-color);
+    font-size: 14px;
+    color: var(--text-secondary);
+}
+
+/* ============================================
+   FINAL ESTILOS DANNA MAJHLI AVALOS SANTOS 
+   ============================================ */
+   /* ==========================
+   Ajustes para menú de sesión
+   ========================== */
+
+.menu-usuario {
+    font-size: 14px;
+    color: var(--text-primary);
+    margin-right: 6px;
+}
+
+.btn-logout-menu {
+    border: 1px solid #d1d5db;
+    background-color: #ffffff;
+    color: #111827;
+    padding: 4px 10px;
+    border-radius: 999px;
+    font-size: 12px;
+    cursor: pointer;
+}
+
+.btn-logout-menu:hover {
+    background-color: #f3f4f6;
+}
+/* ==========================
+   Vista de carrito de compras
+   ========================== */
+
+.cart-main {
+  min-height: calc(100vh - 120px);
+  display: flex;
+  justify-content: center;
+  padding: 24px;
+  background-color: var(--bg-primary, #f3f4f6);
+  color: var(--text-primary, #111827);
+}
+
+.cart-container {
+  width: 100%;
+  max-width: 960px;
+  background: #ffffff;
+  border-radius: 16px;
+  box-shadow: 0 10px 25px rgba(15, 23, 42, 0.08);
+  padding: 24px;
+}
+
+.cart-container h1 {
+  font-size: 22px;
+  margin-bottom: 16px;
+}
+
+.cart-empty {
+  font-size: 14px;
+}
+
+.cart-empty a {
+  color: #2563eb;
+  text-decoration: none;
+  margin-left: 4px;
+}
+
+.cart-empty a:hover {
+  text-decoration: underline;
+}
+
+.cart-table {
+  width: 100%;
+  border-collapse: collapse;
+  font-size: 14px;
+  margin-bottom: 16px;
+}
+
+.cart-table th,
+.cart-table td {
+  padding: 8px 6px;
+  border-bottom: 1px solid #e5e7eb;
+  text-align: left;
+}
+
+.cart-qty-controls {
+  display: flex;
+  align-items: center;
+  gap: 4px;
+}
+
+.cart-qty-btn {
+  width: 24px;
+  height: 24px;
+  border-radius: 999px;
+  border: 1px solid #d1d5db;
+  background: #ffffff;
+  cursor: pointer;
+}
+
+.cart-qty-btn:hover {
+  background: #f3f4f6;
+}
+
+.cart-remove-btn {
+  border: none;
+  background: transparent;
+  color: #b91c1c;
+  cursor: pointer;
+  font-size: 13px;
+}
+
+.cart-summary {
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-end;
+  gap: 16px;
+  font-size: 14px;
+}
+
+.cart-total {
+  font-weight: bold;
+  font-size: 16px;
+}
+
+.cart-confirm-button {
+  padding: 10px 18px;
+  border-radius: 999px;
+  border: none;
+  background: #111827;
+  color: #f9fafb;
+  font-weight: 600;
+  cursor: pointer;
+}
+
+.cart-confirm-button:hover {
+  box-shadow: 0 8px 15px rgba(15, 23, 42, 0.25);
+}
+
+.cart-message {
+  margin-top: 8px;
+  font-size: 13px;
+}
+
+.cart-message.error {
+  color: #b91c1c;
+}
+
+.cart-message.ok {
+  color: #15803d;
+}
+
+@media (max-width: 640px) {
+  .cart-container {
+    padding: 18px 14px;
+  }
+
+  .cart-summary {
+    flex-direction: column;
+    align-items: flex-start;
+  }
+}
+/* ==========================
+   Fin vista de carrito de compras
+   ========================== */

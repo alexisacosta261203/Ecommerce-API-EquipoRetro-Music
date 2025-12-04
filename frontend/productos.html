@@ -15,10 +15,16 @@
             <div class="header-content">
                 <h1 class="header-title">Todos los productos</h1>
                 <div class="header-actions">
+                    <!-- Contador de productos (ya lo maneja app.js) -->
                     <span class="product-counter" id="contadorProductos">0 productos</span>
-                    <button class="cart-button">
-                        <i class="fas fa-shopping-cart cart-icon"></i>Carrito
+
+                    <!-- Botón de carrito con contador -->
+                   <button class="cart-button" onclick="window.location.href='carrito.html'">
+                        <i class="fas fa-shopping-cart cart-icon"></i>
+                        <span>Carrito</span>
+                        <span id="contadorCarrito" class="cart-counter">(0)</span>
                     </button>
+
                 </div>
             </div>
         </div>
@@ -73,6 +79,7 @@
         </section>
     </main>
 
+
     <!-- ========== MODAL PARA VISTA RÁPIDA DEL PRODUCTO ========== -->
     <div class="producto-modal-overlay" id="productoModal">
         <div class="producto-modal">
@@ -89,6 +96,11 @@
         </div>
     </div>
 
+
+    <!-- Scripts -->
+    <script src="js/accessibility.js"></script>
+    <script src="js/session.js"></script>
+    <script src="js/cart.js"></script>
     <script src="app.js"></script>
 </body>
 </html>

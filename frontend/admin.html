@@ -1,0 +1,425 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8" />
+    <title>Retro Music | Panel de Administrador</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+
+    <!-- Fuentes -->
+    <link href="https://fonts.googleapis.com/css2?family=Press+Start+2P&family=Inter:wght@300;400;500;600&display=swap" rel="stylesheet">
+
+    <!-- CSS -->
+    <link rel="stylesheet" href="css/admin.css">
+</head>
+<body>
+<div class="admin-layout">
+    <!-- SIDEBAR -->
+    <aside class="sidebar">
+        <div class="logo">
+            <div class="logo-img-wrapper">
+                <img src="img/logo.png" alt="Retro Music logo" class="logo-img">
+            </div>
+            <div class="logo-text">
+                <h1>Retro Music</h1>
+                <span>Panel de administrador</span>
+            </div>
+        </div>
+
+        <div>
+            <div class="sidebar-section-title">Navegación</div>
+            <div class="menu">
+                <button class="menu-btn active" data-section="productos">
+                    <span class="icon">🎸</span>
+                    Productos
+                </button>
+                <button class="menu-btn" data-section="ordenes">
+                    <span class="icon">🧾</span>
+                    Órdenes
+                </button>
+                <button class="menu-btn" data-section="usuarios">
+                    <span class="icon">👤</span>
+                    Usuarios
+                </button>
+                <button class="menu-btn" data-section="ajustes">
+                    <span class="icon">⚙️</span>
+                    Ajustes
+                </button>
+            </div>
+        </div>
+
+        <div>
+            <div class="sidebar-section-title">Resumen rápido</div>
+            <div class="summary-card">
+                <div>
+                    <span class="label">Instrumentos</span><br>
+                    <span class="value" id="summary-total">0</span>
+                </div>
+                <div>
+                    <span class="label">Guitarras</span><br>
+                    <span class="value" id="summary-guitarras">0</span>
+                </div>
+                <div>
+                    <span class="label">Bajos</span><br>
+                    <span class="value" id="summary-bajos">0</span>
+                </div>
+                <div>
+                    <span class="label">Baterías</span><br>
+                    <span class="value" id="summary-baterias">0</span>
+                </div>
+            </div>
+            <div class="badge-status">
+                <div class="badge-status-dot"></div>
+                Panel listo para demostración (datos en memoria)
+            </div>
+        </div>
+    </aside>
+
+    <!-- MAIN -->
+    <main class="main">
+        <!-- BARRA SUPERIOR: login admin -->
+        <header class="top-bar">
+            <div class="top-bar-left">
+                <h2 class="top-title">Panel de administración Retro Music</h2>
+            </div>
+            <div class="top-bar-right">
+                <span class="admin-session-label">
+                    Admin:
+                    <strong id="adminNameLabel">No autenticado</strong>
+                </span>
+                <button id="loginBtn" class="btn-secondary">Iniciar sesión</button>
+                <button id="logoutBtn" class="btn-secondary btn-secondary-danger" style="display:none;">
+                    Cerrar sesión
+                </button>
+            </div>
+        </header>
+
+        <!-- SECCIÓN PRODUCTOS -->
+        <section class="section active" id="section-productos">
+            <div class="main-header">
+                <div class="main-header-info">
+                    <h2>
+                        Gestión de instrumentos
+                        <span class="emoji">🎛️</span>
+                    </h2>
+                    <p>Agrega, edita o elimina instrumentos del catálogo de Retro Music.</p>
+                </div>
+
+                <div class="top-actions">
+                    <div class="pill">
+                        <div class="pill-dot"></div>
+                        Vista de admin – requiere sesión iniciada
+                    </div>
+
+                    <div class="search-wrapper">
+                        <input
+                            type="text"
+                            id="searchInput"
+                            class="search-input"
+                            placeholder="Buscar por nombre o marca..."
+                        />
+                        <span class="search-icon">🔍</span>
+                    </div>
+
+                    <select id="filterCategory" class="filter-select">
+                        <option value="todas">Todas las categorías</option>
+                        <option value="guitarras">Guitarras</option>
+                        <option value="guitarras-electricas">Guitarras eléctricas</option>
+                        <option value="bajos">Bajos</option>
+                        <option value="baterias">Baterías</option>
+                    </select>
+
+                    <button type="button" class="btn-primary" id="scrollToFormBtn">
+                        <span>＋</span> Nuevo producto
+                    </button>
+                </div>
+            </div>
+
+            <div class="content">
+                <!-- FORMULARIO PRODUCTO -->
+                <section class="card">
+                    <div class="card-header">
+                        <div>
+                            <h3 id="formTitle">Agregar instrumento</h3>
+                            <span id="formSubtitle">
+                                Completa los campos para añadir un nuevo instrumento al catálogo.
+                            </span>
+                        </div>
+                    </div>
+
+                    <form id="productForm">
+                        <input type="hidden" id="editingId" />
+
+                        <div class="form-grid">
+                            <div class="form-group">
+                                <label for="name">Nombre del producto *</label>
+                                <input
+                                    type="text"
+                                    id="name"
+                                    class="form-control"
+                                    placeholder="Ej. Fender Edición limitada California Vintage Malibu"
+                                    required
+                                />
+                            </div>
+
+                            <div class="form-group">
+                                <label for="brand">Marca *</label>
+                                <input
+                                    type="text"
+                                    id="brand"
+                                    class="form-control"
+                                    placeholder="Ej. Fender, Gibson, Yamaha..."
+                                    required
+                                />
+                            </div>
+
+                            <div class="form-group">
+                                <label for="category">Categoría *</label>
+                                <select id="category" class="form-select" required>
+                                    <option value="">Selecciona una opción</option>
+                                    <option value="guitarras">Guitarras</option>
+                                    <option value="guitarras-electricas">Guitarras eléctricas</option>
+                                    <option value="bajos">Bajos</option>
+                                    <option value="baterias">Baterías</option>
+                                </select>
+                            </div>
+
+                            <div class="form-group">
+                                <label for="price">Precio (MXN) *</label>
+                                <input
+                                    type="number"
+                                    id="price"
+                                    class="form-control"
+                                    placeholder="Ej. 19999"
+                                    min="0"
+                                    step="0.01"
+                                    required
+                                />
+                            </div>
+
+                            <div class="form-group">
+                                <label for="stock">Stock *</label>
+                                <input
+                                    type="number"
+                                    id="stock"
+                                    class="form-control"
+                                    placeholder="Ej. 10"
+                                    min="0"
+                                    step="1"
+                                    required
+                                />
+                            </div>
+
+                            <div class="form-group">
+                                <label for="image">URL de imagen</label>
+                                <input
+                                    type="url"
+                                    id="image"
+                                    class="form-control"
+                                    placeholder="https://tus-imagenes.com/guitarra-fender.png"
+                                />
+                            </div>
+                        </div>
+
+                        <div class="form-group">
+                            <label for="description">Descripción breve</label>
+                            <textarea
+                                id="description"
+                                class="form-textarea"
+                                placeholder="Cuerpo de concierto Malibu con tapa de abeto y fondo de caoba..."
+                            ></textarea>
+                        </div>
+
+                        <div class="form-actions">
+                            <button type="button" class="btn-outline" id="resetFormBtn">
+                                Limpiar formulario
+                            </button>
+                            <button type="submit" class="btn-primary">
+                                <span id="submitLabel">Guardar producto</span>
+                            </button>
+                        </div>
+                    </form>
+                </section>
+
+                <!-- TABLA + REPORTES -->
+                <section class="card-plain">
+                    <div class="card-header">
+                        <div>
+                            <h3>Instrumentos registrados</h3>
+                            <span id="productsCounter">0 productos en el catálogo.</span>
+                        </div>
+                    </div>
+
+                    <div class="table-wrapper">
+                        <table>
+                            <thead>
+                            <tr>
+                                <th>Instrumento</th>
+                                <th>Categoría</th>
+                                <th>Precio</th>
+                                <th>Stock</th>
+                                <th>Acciones</th>
+                            </tr>
+                            </thead>
+                            <tbody id="productsTableBody">
+                            <!-- filas generadas por JS -->
+                            </tbody>
+                        </table>
+
+                        <div id="emptyState" class="empty-state">
+                            No hay instrumentos registrados aún.
+                            <span>Agrega tu primera guitarra, bajo o batería con el formulario de la izquierda.</span>
+                        </div>
+                    </div>
+
+                    <!-- Reporte existencias + total ventas -->
+                    <div class="report-grid">
+                        <div class="mini-card">
+                            <h4>Reporte de existencias</h4>
+                            <ul id="stockReportList" class="mini-list"></ul>
+                        </div>
+                        <div class="mini-card">
+                            <h4>Total de ventas de la tienda</h4>
+                            <p class="total-ventas" id="totalCompanySales">$0 MXN</p>
+                        </div>
+                    </div>
+                </section>
+            </div>
+
+            <!-- SECCIÓN VENTAS Y GRÁFICA -->
+            <section class="sales-layout">
+                <article class="card">
+                    <div class="card-header">
+                        <div>
+                            <h3>Registrar venta</h3>
+                            <span>
+                                Simula una venta para mostrar el <strong>antes y después</strong> en la tabla,
+                                el reporte y la gráfica.
+                            </span>
+                        </div>
+                    </div>
+
+                    <form id="saleForm">
+                        <div class="form-grid">
+                            <div class="form-group">
+                                <label for="saleProduct">Instrumento *</label>
+                                <select id="saleProduct" class="form-select" required>
+                                    <!-- opciones generadas por JS -->
+                                </select>
+                            </div>
+                            <div class="form-group">
+                                <label for="saleQuantity">Cantidad *</label>
+                                <input
+                                    type="number"
+                                    id="saleQuantity"
+                                    class="form-control"
+                                    min="1"
+                                    step="1"
+                                    required
+                                />
+                            </div>
+                        </div>
+                        <div class="form-actions">
+                            <button type="submit" class="btn-primary">
+                                Registrar venta
+                            </button>
+                        </div>
+                    </form>
+
+                    <p class="hint">
+                        Si el stock llega a <strong>0</strong>, el instrumento mostrará el mensaje:
+                        <em>“por el momento este producto no está disponible”</em>.
+                    </p>
+                </article>
+
+                <article class="card-plain">
+                    <div class="card-header">
+                        <div>
+                            <h3>Historial de ventas</h3>
+                            <span>Tabla dinámica que se actualiza en cada venta.</span>
+                        </div>
+                    </div>
+
+                    <div class="table-wrapper mini-table-wrapper">
+                        <table>
+                            <thead>
+                            <tr>
+                                <th>Instrumento</th>
+                                <th>Cantidad</th>
+                                <th>Importe</th>
+                                <th>Fecha</th>
+                            </tr>
+                            </thead>
+                            <tbody id="salesTableBody">
+                            <!-- filas generadas por JS -->
+                            </tbody>
+                        </table>
+
+                        <div id="salesEmptyState" class="empty-state">
+                            Aún no se registran ventas.
+                            <span>Realiza una venta para ver el movimiento en la tabla y la gráfica.</span>
+                        </div>
+                    </div>
+                </article>
+
+                <article class="card-plain">
+                    <div class="card-header">
+                        <div>
+                            <h3>Gráfica de ventas por instrumento</h3>
+                            <span>Gráfica que muestra el total vendido por instrumento.</span>
+                        </div>
+                    </div>
+
+                    <div class="chart-wrapper">
+                        <canvas id="salesChart"></canvas>
+                    </div>
+                </article>
+            </section>
+        </section>
+
+        <!-- SECCIÓN ÓRDENES -->
+        <section class="section" id="section-ordenes">
+            <h2 class="section-title">Órdenes</h2>
+            <p class="section-desc">
+                Vista de ejemplo para navegación. Aquí podrían listarse órdenes del sistema de e-commerce.
+            </p>
+            <div class="card-plain">
+                <p>Aqui se van a ver las órdenes.</p>
+            </div>
+        </section>
+
+        <!-- SECCIÓN USUARIOS -->
+        <section class="section" id="section-usuarios">
+            <h2 class="section-title">Usuarios</h2>
+            <p class="section-desc">
+                Vista de ejemplo para navegación de usuarios administradores / clientes.
+            </p>
+            <div class="card-plain">
+                <p>Aqui van a ir los Usuarios de admin y clientes./p>
+            </div>
+        </section>
+
+        <!-- SECCIÓN AJUSTES -->
+        <section class="section" id="section-ajustes">
+            <h2 class="section-title">Ajustes</h2>
+            <p class="section-desc">
+                Aquí podrían configurarse parámetros del sistema (moneda, impuestos, etc.).
+            </p>
+            <div class="card-plain">
+                <p>Contenido de prueba en ajustes. La navegación muestra que el panel está dividido en secciones.</p>
+            </div>
+        </section>
+
+        <!-- FOOTER -->
+        <footer class="footer">
+            <span>Retro Music · Panel de administración</span>
+            <span><strong>Nota:</strong> Datos de ejemplo gestionados en el front-end para la demostración.</span>
+        </footer>
+    </main>
+</div>
+
+<!-- Chart.js para la gráfica -->
+<script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+<!-- JS del panel -->
+<script src="js/admin.js"></script>
+</body>
+</html>

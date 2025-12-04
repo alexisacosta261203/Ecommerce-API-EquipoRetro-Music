@@ -1,7 +1,7 @@
 // ========== CONFIGURACIÓN INICIAL ==========
 
 // Definir la URL base de la API del backend
-const API_URL = "http://localhost:3000/api";
+const API_URL = "http://localhost:4000/api";
 
 // Variables globales para almacenar los datos de la aplicación
 let todosLosProductos = [];        // Array que contendrá todos los productos obtenidos de la API
@@ -231,7 +231,7 @@ function limpiarDatosProductos() {
         // Detectar y limpiar imágenes corruptas o placeholders
         if (producto.imagen && (producto.imagen.includes('FFFFF') || producto.imagen.includes('text=Instrumento'))) {
             // Mensaje de depuración para imágenes problemáticas
-            console.log(`🔄 Limpiando imagen corrupta para: ${producto.nombre}`);
+            console.log(`Limpiando imagen corrupta para: ${producto.nombre}`);
             // Asignar valor vacío para forzar el uso de placeholder
             producto.imagen = '';
         }
@@ -496,11 +496,23 @@ function renderizarProductos(productos) {
     }
     
     // Convertir array de productos a HTML y actualizar el contenedor
+
     container.innerHTML = productos.map(producto => crearTarjetaProducto(producto)).join('');
     
     // Configurar eventos click en las tarjetas (para abrir modal al hacer click en cualquier parte)
     configurarClickEnTarjetas();
+
+   // Convertir array de productos a HTML y actualizar el contenedor
+container.innerHTML = productos.map(producto => crearTarjetaProducto(producto)).join('');
+
+// Después de renderizar, conectar los botones de carrito (si existe la función)
+if (typeof conectarBotonesCarrito === 'function') {
+    conectarBotonesCarrito();
+
 }
+}
+
+
 
 // Función para crear el HTML de una tarjeta de producto individual
 function crearTarjetaProducto(producto) {
@@ -516,11 +528,11 @@ function crearTarjetaProducto(producto) {
         } 
         // Caso 2: Si la imagen empieza con / (ruta absoluta del servidor)
         else if (producto.imagen.startsWith('/')) {
-            imagenUrl = `http://localhost:3000${producto.imagen}`;
+            imagenUrl = `http://localhost:4000${producto.imagen}`;
         }
         // Caso 3: Si es solo un nombre de archivo (sin ruta)
         else {
-            imagenUrl = `http://localhost:3000/uploads/productos/${producto.imagen}`;
+            imagenUrl = `http://localhost:4000/uploads/productos/${producto.imagen}`;
         }
     } else {
         // Caso 4: No hay imagen - usar placeholder seguro
@@ -563,6 +575,7 @@ function crearTarjetaProducto(producto) {
                     <span>Categoría: ${categoriaNombre}</span>
                 </div>
                 
+<<<<<<< HEAD
                 <div class="product-actions">
                     <button class="view-details-btn" onclick="event.stopPropagation(); abrirModalProductoDesdeTarjeta(${producto.id})">
                         <i class="fas fa-eye"></i> Ver detalles
@@ -572,6 +585,13 @@ function crearTarjetaProducto(producto) {
                         <span>Agregar al carrito</span>
                     </button>
                 </div>
+
+               <button class="add-to-cart-button" data-producto-id="${producto.id}">
+                <i class="fas fa-shopping-cart cart-button-icon"></i>
+                <span>Agregar al carrito</span>
+</button>
+
+
             </div>
         </div>
     `;
