@@ -6,6 +6,7 @@
     <title>Tienda de Instrumentos Musicales</title>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     <link rel="stylesheet" href="estilos.css">
+    <link rel="stylesheet" href="modal.css">
 </head>
 <body>
     <!-- Header de la página -->
@@ -77,6 +78,24 @@
             <!-- Los productos se cargarán dinámicamente aquí -->
         </section>
     </main>
+
+
+    <!-- ========== MODAL PARA VISTA RÁPIDA DEL PRODUCTO ========== -->
+    <div class="producto-modal-overlay" id="productoModal">
+        <div class="producto-modal">
+            <button class="modal-close-btn" id="closeModalBtn">
+                <i class="fas fa-times"></i>
+            </button>
+            <div class="modal-content" id="modalContent">
+                <!-- El contenido se cargará dinámicamente con JavaScript -->
+                <div class="modal-loading">
+                    <i class="fas fa-spinner fa-spin"></i>
+                    <p>Cargando producto...</p>
+                </div>
+            </div>
+        </div>
+    </div>
+
 
     <!-- Scripts -->
     <script src="js/accessibility.js"></script>
