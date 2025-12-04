@@ -1,4 +1,19 @@
+<<<<<<< HEAD
 require("dotenv").config();
+=======
+require('dotenv').config();
+const express = require('express');
+const cors = require('cors');
+const allRoutes = require('./routes/categoriasRoutes');
+const pool = require('./db/conexion');
+const path = require('path');
+const contactoRoutes = require('./routes/contactoRoutes');
+const suscripcionRoutes = require('./routes/suscripcionRoutes');
+const authRoutes = require('./routes/authRoutes');
+const ordenRoutes = require('./routes/ordenRoutes');
+
+
+>>>>>>> 5f366b3e655f29f7c3e303eefbc50422ab8f4837
 
 const express = require("express");
 const cors = require("cors");
@@ -36,12 +51,20 @@ app.use("/img", express.static("img")); // carpeta estática de main
 
 // ----- RUTAS -----
 
+<<<<<<< HEAD
 // main
 app.use("/api/contacto", contactoRoutes);
 app.use("/api/suscripcion", suscripcionRoutes);
 
 // categorías (antes las llamabas allRoutes en /api)
 app.use("/api", categoriasRoutes);
+=======
+app.use('/api/auth', authRoutes);
+
+// Todas las rutas en un solo archivo
+app.use('/api', allRoutes);
+app.use('/api', ordenRoutes); //para api ordenes
+>>>>>>> 5f366b3e655f29f7c3e303eefbc50422ab8f4837
 
 // productos (para el panel de admin)
 app.use("/api/productos", productosRoutes);
@@ -67,3 +90,7 @@ app.listen(PORT, async () => {
     console.log(`Servidor corriendo en http://localhost:${PORT}`);
     await testConnection();
 });
+<<<<<<< HEAD
+=======
+ 
+>>>>>>> 5f366b3e655f29f7c3e303eefbc50422ab8f4837
