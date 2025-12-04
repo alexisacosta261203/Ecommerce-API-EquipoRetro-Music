@@ -1,8 +1,4 @@
-<<<<<<< HEAD
-=======
 
-require("dotenv").config();
->>>>>>> bda98fe70f5f923eb3a51c72d4168874c56cf5f0
 require('dotenv').config();
 const express = require('express');
 const cors = require('cors');
@@ -14,11 +10,6 @@ const suscripcionRoutes = require('./routes/suscripcionRoutes');
 const authRoutes = require('./routes/authRoutes');
 const ordenRoutes = require('./routes/ordenRoutes');
 
-
-<<<<<<< HEAD
-=======
-
->>>>>>> bda98fe70f5f923eb3a51c72d4168874c56cf5f0
 
 const express = require("express");
 const cors = require("cors");
@@ -56,29 +47,19 @@ app.use("/img", express.static("img")); // carpeta estática de main
 
 // ----- RUTAS -----
 
-<<<<<<< HEAD
-=======
-
->>>>>>> bda98fe70f5f923eb3a51c72d4168874c56cf5f0
 // main
 app.use("/api/contacto", contactoRoutes);
 app.use("/api/suscripcion", suscripcionRoutes);
 
 // categorías (antes las llamabas allRoutes en /api)
 app.use("/api", categoriasRoutes);
-<<<<<<< HEAD
-=======
 
->>>>>>> bda98fe70f5f923eb3a51c72d4168874c56cf5f0
 app.use('/api/auth', authRoutes);
 
 // Todas las rutas en un solo archivo
 app.use('/api', allRoutes);
 app.use('/api', ordenRoutes); //para api ordenes
-<<<<<<< HEAD
-=======
 
->>>>>>> bda98fe70f5f923eb3a51c72d4168874c56cf5f0
 
 // productos (para el panel de admin)
 app.use("/api/productos", productosRoutes);
@@ -104,10 +85,4 @@ app.listen(PORT, async () => {
     console.log(`Servidor corriendo en http://localhost:${PORT}`);
     await testConnection();
 });
-<<<<<<< HEAD
-=======
 
-
- 
-
->>>>>>> bda98fe70f5f923eb3a51c72d4168874c56cf5f0
