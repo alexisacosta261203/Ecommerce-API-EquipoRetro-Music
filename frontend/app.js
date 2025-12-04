@@ -13,7 +13,7 @@ let filtrosActivos = {             // Objeto que guarda los filtros actualmente 
 };
 let ordenActual = 'recomendados';  // Variable que guarda el tipo de ordenamiento actual
 
-
+// ========== INICIALIZACIÓN ==========
 
 // Evento que se ejecuta cuando el documento HTML está completamente cargado
 document.addEventListener('DOMContentLoaded', function() {
@@ -25,9 +25,11 @@ document.addEventListener('DOMContentLoaded', function() {
     cargarProductos();
     // Configurar todos los event listeners de la interfaz
     configurarEventListeners();
+    // Configurar eventos del modal
+    configurarEventosModalBase();
 });
 
-
+// ========== CONFIGURACIÓN DE EVENTOS ==========
 
 // Función para configurar todos los event listeners de la aplicación
 function configurarEventListeners() {
@@ -73,7 +75,32 @@ function configurarEventListeners() {
     configurarSubidaImagenes();
 }
 
+// Configurar eventos base del modal
+function configurarEventosModalBase() {
+    const modal = document.getElementById('productoModal');
+    const closeBtn = document.getElementById('closeModalBtn');
+    
+    if (closeBtn) {
+        closeBtn.addEventListener('click', cerrarModal);
+    }
+    
+    if (modal) {
+        modal.addEventListener('click', (e) => {
+            if (e.target === modal) {
+                cerrarModal();
+            }
+        });
+    }
+    
+    // Cerrar modal con tecla Escape
+    document.addEventListener('keydown', (e) => {
+        if (e.key === 'Escape') {
+            cerrarModal();
+        }
+    });
+}
 
+// ========== FUNCIONES PARA FILTROS ==========
 
 // Función para limpiar un filtro específico (categoría o marca)
 function limpiarFiltro(tipo, elemento) {
@@ -95,6 +122,26 @@ function limpiarFiltro(tipo, elemento) {
     aplicarFiltrosYOrdenamiento();
 }
 
+// Función para manejar la selección de un filtro
+function manejarFiltro(tipo, valor, elemento) {
+    // Mensaje de depuración
+    console.log(`Aplicando filtro de ${tipo}: ${valor}`);
+    
+    // Remover la clase 'active' de todos los botones del mismo tipo
+    document.querySelectorAll(`.filter-button[data-tipo="${tipo}"]`).forEach(btn => {
+        btn.classList.remove('active');
+    });
+    
+    // Agregar la clase 'active' al botón que fue clickeado
+    elemento.classList.add('active');
+    // Actualizar el filtro activo con el nuevo valor
+    filtrosActivos[tipo] = valor;
+    
+    // Aplicar los cambios recalculando filtros y re-renderizando
+    aplicarFiltrosYOrdenamiento();
+}
+
+// ========== CARGA DE DATOS DESDE API ==========
 
 // Función asíncrona para cargar las categorías desde la API
 async function cargarCategorias() {
@@ -174,8 +221,6 @@ async function cargarProductos() {
     }
 }
 
-
-
 // Función para limpiar y normalizar los datos de productos
 function limpiarDatosProductos() {
     // Mensaje de depuración
@@ -233,6 +278,7 @@ function verificarImagenesProductos() {
     console.log(`Resumen imágenes: ${imagenesCorruptas} imágenes problemáticas de ${todosLosProductos.length} productos`);
 }
 
+// ========== RENDERIZADO DE BOTONES DE FILTRO ==========
 
 // Función para renderizar los botones de categorías en la interfaz
 function renderizarBotonesCategorias() {
@@ -312,28 +358,7 @@ function renderizarBotonesMarcas() {
     });
 }
 
-
-
-// Función para manejar la selección de un filtro
-function manejarFiltro(tipo, valor, elemento) {
-    // Mensaje de depuración
-    console.log(`Aplicando filtro de ${tipo}: ${valor}`);
-    
-    // Remover la clase 'active' de todos los botones del mismo tipo
-    document.querySelectorAll(`.filter-button[data-tipo="${tipo}"]`).forEach(btn => {
-        btn.classList.remove('active');
-    });
-    
-    // Agregar la clase 'active' al botón que fue clickeado
-    elemento.classList.add('active');
-    // Actualizar el filtro activo con el nuevo valor
-    filtrosActivos[tipo] = valor;
-    
-    // Aplicar los cambios recalculando filtros y re-renderizando
-    aplicarFiltrosYOrdenamiento();
-}
-
-
+// ========== FILTRADO Y ORDENAMIENTO ==========
 
 // Función principal que aplica filtros y ordenamiento
 function aplicarFiltrosYOrdenamiento() {
@@ -425,6 +450,7 @@ function ordenarProductos(productos) {
     }
 }
 
+// ========== RENDERIZADO DE PRODUCTOS ==========
 
 // Función para actualizar los contadores de productos en la interfaz
 function actualizarContadores(total, filtrado) {
@@ -471,11 +497,14 @@ function renderizarProductos(productos) {
     
     // Convertir array de productos a HTML y actualizar el contenedor
     container.innerHTML = productos.map(producto => crearTarjetaProducto(producto)).join('');
+    
+    // Configurar eventos click en las tarjetas (para abrir modal al hacer click en cualquier parte)
+    configurarClickEnTarjetas();
 }
 
 // Función para crear el HTML de una tarjeta de producto individual
 function crearTarjetaProducto(producto) {
-    // CORREGIDO: Manejo robusto de URLs de imágenes con múltiples formatos
+    // Manejo robusto de URLs de imágenes con múltiples formatos
     
     let imagenUrl = '';
     
@@ -511,7 +540,7 @@ function crearTarjetaProducto(producto) {
     
     // Devolver el HTML completo de la tarjeta del producto
     return `
-        <div class="product-card">
+        <div class="product-card" data-producto-id="${producto.id}">
             <div class="product-image-container">
                 <img src="${imagenUrl}" alt="${producto.nombre}" class="product-image" 
                      onerror="this.src='https://via.placeholder.com/300x200/4B5563/FFFFFF?text=Error+Imagen'">
@@ -534,16 +563,329 @@ function crearTarjetaProducto(producto) {
                     <span>Categoría: ${categoriaNombre}</span>
                 </div>
                 
-                <button class="add-to-cart-button">
-                    <i class="fas fa-shopping-cart cart-button-icon"></i>
-                    <span>Agregar al carrito</span>
-                </button>
+                <div class="product-actions">
+                    <button class="view-details-btn" onclick="event.stopPropagation(); abrirModalProductoDesdeTarjeta(${producto.id})">
+                        <i class="fas fa-eye"></i> Ver detalles
+                    </button>
+                    <button class="add-to-cart-button" onclick="event.stopPropagation(); agregarAlCarritoDesdeLista(${producto.id})">
+                        <i class="fas fa-shopping-cart cart-button-icon"></i>
+                        <span>Agregar al carrito</span>
+                    </button>
+                </div>
             </div>
         </div>
     `;
 }
 
+// Función para configurar clicks en las tarjetas de producto
+function configurarClickEnTarjetas() {
+    document.querySelectorAll('.product-card').forEach(card => {
+        card.addEventListener('click', function(e) {
+            // No hacer nada si el clic fue en un botón
+            if (e.target.closest('button')) return;
+            
+            const productoId = this.getAttribute('data-producto-id');
+            abrirModalProductoDesdeTarjeta(productoId);
+        });
+    });
+}
 
+// ========== FUNCIONES PARA EL MODAL ==========
+
+// Función auxiliar para abrir modal desde tarjeta
+function abrirModalProductoDesdeTarjeta(productoId) {
+    const producto = todosLosProductos.find(p => p.id == productoId);
+    if (producto) {
+        abrirModalProducto(producto);
+    }
+}
+
+// Función para abrir el modal con los detalles del producto
+function abrirModalProducto(producto) {
+    const modal = document.getElementById('productoModal');
+    const modalContent = document.getElementById('modalContent');
+    
+    // Formatear precio
+    const precioFormateado = new Intl.NumberFormat('es-MX', {
+        style: 'currency',
+        currency: 'MXN'
+    }).format(producto.precio);
+    
+    // Manejar imagen
+    let imagenUrl = '';
+    if (producto.imagen) {
+        if (producto.imagen.startsWith('http')) {
+            imagenUrl = producto.imagen;
+        } else if (producto.imagen.startsWith('/')) {
+            imagenUrl = `http://localhost:3000${producto.imagen}`;
+        } else {
+            imagenUrl = `http://localhost:3000/uploads/productos/${producto.imagen}`;
+        }
+    } else {
+        imagenUrl = 'https://via.placeholder.com/500x400/4B5563/FFFFFF?text=Sin+Imagen';
+    }
+    
+    // Obtener categoría y marca
+    const categoriaNombre = categorias.find(c => c.id == producto.categoria_id)?.nombre || 'Categoría';
+    const marcaNombre = marcas.find(m => m.id == producto.marca_id)?.nombre || 'Marca';
+    
+    // Crear contenido del modal
+    modalContent.innerHTML = `
+        <div class="modal-image-container">
+            <img src="${imagenUrl}" 
+                 alt="${producto.nombre}" 
+                 class="modal-image"
+                 onerror="this.src='https://via.placeholder.com/500x400/4B5563/FFFFFF?text=Error+Imagen'">
+        </div>
+        
+        <div class="modal-info">
+            <div class="modal-brand">${marcaNombre}</div>
+            <h2 class="modal-title">${producto.nombre}</h2>
+            
+            <div class="modal-sku">SKU: ${producto.sku || producto.id}</div>
+            
+            <div class="modal-price">${precioFormateado}</div>
+            
+        
+            
+            <div class="modal-quantity">
+                <label class="quantity-label">Cantidad:</label>
+                <div class="quantity-controls">
+                    <button class="quantity-btn" id="decrementBtn">-</button>
+                    <input type="number" class="quantity-input" id="quantityInput" value="1" min="1" max="99">
+                    <button class="quantity-btn" id="incrementBtn">+</button>
+                </div>
+            </div>
+            
+            <button class="modal-add-to-cart" id="modalAddToCartBtn">
+                <i class="fas fa-shopping-cart"></i> Agregar al carrito
+            </button>
+            
+            <div class="modal-description">
+                <h3 class="description-title">INFORMACIÓN DE PRODUCTO</h3>
+                <ul class="description-list" id="descriptionList">
+                    ${formatearDescripcionModal(producto.descripcion)}
+                </ul>
+            </div>
+        </div>
+    `;
+    
+    // Mostrar modal
+    modal.classList.add('active');
+    document.body.style.overflow = 'hidden'; // Prevenir scroll
+    
+    // Configurar eventos específicos del modal
+    configurarEventosModalProducto(producto);
+}
+
+// Función para formatear la descripción en lista
+function formatearDescripcionModal(descripcion) {
+    if (!descripcion) {
+        return '<li>No hay información disponible para este producto.</li>';
+    }
+    
+    // Separar por puntos o saltos de línea
+    const puntos = descripcion.split(/[.•]\s+/).filter(item => item.trim() !== '');
+    
+    if (puntos.length > 0) {
+        return puntos.map(punto => `<li>${punto.trim()}</li>`).join('');
+    }
+    
+    return `<li>${descripcion}</li>`;
+}
+
+// Configurar eventos específicos del modal de producto
+function configurarEventosModalProducto(producto) {
+    const decrementBtn = document.querySelector('#decrementBtn');
+    const incrementBtn = document.querySelector('#incrementBtn');
+    const quantityInput = document.querySelector('#quantityInput');
+    const addToCartBtn = document.querySelector('#modalAddToCartBtn');
+    
+    // Controles de cantidad
+    if (decrementBtn) {
+        decrementBtn.addEventListener('click', () => {
+            let value = parseInt(quantityInput.value) || 1;
+            if (value > 1) {
+                quantityInput.value = value - 1;
+            }
+        });
+    }
+    
+    if (incrementBtn) {
+        incrementBtn.addEventListener('click', () => {
+            let value = parseInt(quantityInput.value) || 1;
+            if (value < 99) {
+                quantityInput.value = value + 1;
+            }
+        });
+    }
+    
+    if (quantityInput) {
+        quantityInput.addEventListener('change', () => {
+            let value = parseInt(quantityInput.value) || 1;
+            if (value < 1) quantityInput.value = 1;
+            if (value > 99) quantityInput.value = 99;
+        });
+    }
+    
+    // Agregar al carrito desde modal
+    if (addToCartBtn) {
+        addToCartBtn.addEventListener('click', () => {
+            const cantidad = parseInt(quantityInput.value) || 1;
+            agregarAlCarritoDesdeModal(producto, cantidad);
+        });
+    }
+}
+
+// Cerrar modal
+function cerrarModal() {
+    const modal = document.getElementById('productoModal');
+    modal.classList.remove('active');
+    document.body.style.overflow = 'auto'; // Restaurar scroll
+}
+
+// Agregar al carrito desde modal
+function agregarAlCarritoDesdeModal(producto, cantidad) {
+    // Obtener carrito actual
+    let carrito = JSON.parse(localStorage.getItem('carrito')) || [];
+    
+    // Buscar si el producto ya está en el carrito
+    const productoExistente = carrito.find(item => item.id === producto.id);
+    
+    if (productoExistente) {
+        productoExistente.cantidad += cantidad;
+    } else {
+        carrito.push({
+            id: producto.id,
+            nombre: producto.nombre,
+            precio: producto.precio,
+            imagen: producto.imagen,
+            sku: producto.sku,
+            color: producto.color,
+            cantidad: cantidad
+        });
+    }
+    
+    // Guardar en localStorage
+    localStorage.setItem('carrito', JSON.stringify(carrito));
+    
+    // Mostrar notificación
+    mostrarNotificacion(`✅ ${producto.nombre} (${cantidad}) agregado al carrito`);
+    
+    // Actualizar contador del carrito
+    actualizarContadorCarrito();
+    
+    // Cerrar modal después de agregar
+    setTimeout(() => {
+        cerrarModal();
+    }, 1000);
+}
+
+// Mostrar notificación
+function mostrarNotificacion(mensaje) {
+    // Crear elemento de notificación
+    const notificacion = document.createElement('div');
+    notificacion.className = 'notificacion';
+    notificacion.innerHTML = `
+        <div class="notificacion-contenido">
+            <i class="fas fa-check-circle"></i>
+            <span>${mensaje}</span>
+        </div>
+    `;
+    
+    // Estilos para la notificación
+    notificacion.style.cssText = `
+        position: fixed;
+        top: 20px;
+        right: 20px;
+        background: #16a34a;
+        color: white;
+        padding: 15px 20px;
+        border-radius: 8px;
+        box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+        z-index: 1001;
+        animation: slideIn 0.3s ease;
+        max-width: 400px;
+    `;
+    
+    // Agregar al DOM
+    document.body.appendChild(notificacion);
+    
+    // Remover después de 3 segundos
+    setTimeout(() => {
+        notificacion.style.animation = 'slideOut 0.3s ease';
+        setTimeout(() => notificacion.remove(), 300);
+    }, 3000);
+}
+
+// Actualizar contador del carrito
+function actualizarContadorCarrito() {
+    const carrito = JSON.parse(localStorage.getItem('carrito')) || [];
+    const totalItems = carrito.reduce((sum, item) => sum + item.cantidad, 0);
+    
+    // Actualizar en el header si existe
+    const cartButton = document.querySelector('.cart-button');
+    if (cartButton) {
+        const icon = cartButton.querySelector('.cart-icon');
+        if (totalItems > 0) {
+            // Agregar o actualizar badge
+            let badge = cartButton.querySelector('.cart-badge');
+            if (!badge) {
+                badge = document.createElement('span');
+                badge.className = 'cart-badge';
+                badge.style.cssText = 'position: absolute; top: -5px; right: -5px; background: #ef4444; color: white; border-radius: 50%; width: 20px; height: 20px; display: flex; align-items: center; justify-content: center; font-size: 12px;';
+                cartButton.style.position = 'relative';
+                cartButton.appendChild(badge);
+            }
+            badge.textContent = totalItems;
+        } else {
+            // Remover badge si no hay items
+            const badge = cartButton.querySelector('.cart-badge');
+            if (badge) badge.remove();
+        }
+    }
+}
+
+// ========== FUNCIONES DEL CARRITO ==========
+
+// Agregar al carrito desde lista
+function agregarAlCarritoDesdeLista(productoId) {
+    event.preventDefault();
+    event.stopPropagation();
+    
+    // Buscar el producto en la lista
+    const producto = todosLosProductos.find(p => p.id == productoId);
+    if (!producto) return;
+    
+    // Obtener carrito actual
+    let carrito = JSON.parse(localStorage.getItem('carrito')) || [];
+    
+    // Buscar si el producto ya está en el carrito
+    const productoExistente = carrito.find(item => item.id === producto.id);
+    
+    if (productoExistente) {
+        productoExistente.cantidad += 1;
+    } else {
+        carrito.push({
+            id: producto.id,
+            nombre: producto.nombre,
+            precio: producto.precio,
+                       imagen: producto.imagen,
+            cantidad: 1
+        });
+    }
+    
+    // Guardar en localStorage
+    localStorage.setItem('carrito', JSON.stringify(carrito));
+    
+    // Mostrar notificación
+    mostrarNotificacion(`✅ ${producto.nombre} agregado al carrito`);
+    
+    // Actualizar contador del carrito
+    actualizarContadorCarrito();
+}
+
+// ========== FUNCIONES DE SUBIDA DE IMÁGENES (EXISTENTES) ==========
 
 // Función para configurar los event listeners de la subida de imágenes
 function configurarSubidaImagenes() {
@@ -746,7 +1088,7 @@ function limpiarFormularioImagen() {
     }
 }
 
-
+// ========== FUNCIONES DE ERROR Y UTILIDAD ==========
 
 // Función para mostrar un estado de error en la interfaz
 function mostrarError(mensaje) {
@@ -764,8 +1106,6 @@ function mostrarError(mensaje) {
         </div>
     `;
 }
-
-
 
 // Función para limpiar todos los filtros activos
 function limpiarTodosLosFiltros() {
@@ -788,3 +1128,45 @@ function limpiarTodosLosFiltros() {
     // Aplicar los cambios recalculando y re-renderizando
     aplicarFiltrosYOrdenamiento();
 }
+
+// ========== ANIMACIONES PARA NOTIFICACIONES ==========
+
+// Añadir estilos CSS para animaciones
+const animacionesStyle = document.createElement('style');
+animacionesStyle.textContent = `
+    @keyframes slideIn {
+        from { transform: translateX(100%); opacity: 0; }
+        to { transform: translateX(0); opacity: 1; }
+    }
+    @keyframes slideOut {
+        from { transform: translateX(0); opacity: 1; }
+        to { transform: translateX(100%); opacity: 0; }
+    }
+`;
+document.head.appendChild(animacionesStyle);
+
+// ========== INICIALIZAR CONTADOR DEL CARRITO AL CARGAR ==========
+
+// Inicializar contador del carrito cuando se carga la página
+function inicializarContadorCarrito() {
+    const carrito = JSON.parse(localStorage.getItem('carrito')) || [];
+    const totalItems = carrito.reduce((sum, item) => sum + item.cantidad, 0);
+    
+    if (totalItems > 0) {
+        const cartButton = document.querySelector('.cart-button');
+        if (cartButton) {
+            let badge = cartButton.querySelector('.cart-badge');
+            if (!badge) {
+                badge = document.createElement('span');
+                badge.className = 'cart-badge';
+                badge.style.cssText = 'position: absolute; top: -5px; right: -5px; background: #ef4444; color: white; border-radius: 50%; width: 20px; height: 20px; display: flex; align-items: center; justify-content: center; font-size: 12px;';
+                cartButton.style.position = 'relative';
+                cartButton.appendChild(badge);
+            }
+            badge.textContent = totalItems;
+        }
+    }
+}
+
+// Llamar a la inicialización cuando se carga la página
+document.addEventListener('DOMContentLoaded', inicializarContadorCarrito);
