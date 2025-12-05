@@ -1,47 +1,39 @@
-
+// backend/server.js
 require("dotenv").config();
-require('dotenv').config();
-const express = require('express');
-const cors = require('cors');
-const allRoutes = require('./routes/categoriasRoutes');
-const pool = require('./db/conexion');
-const path = require('path');
-const contactoRoutes = require('./routes/contactoRoutes');
-const suscripcionRoutes = require('./routes/suscripcionRoutes');
-const authRoutes = require('./routes/authRoutes');
-const ordenRoutes = require('./routes/ordenRoutes');
-
-
-
 
 const express = require("express");
 const cors = require("cors");
 const path = require("path");
 
+// Conexión a BD (pool con promesas)
 const pool = require("./db/conexion");
 
 // Rutas
 const categoriasRoutes = require("./routes/categoriasRoutes");
 const contactoRoutes = require("./routes/contactoRoutes");
 const suscripcionRoutes = require("./routes/suscripcionRoutes");
-const productosRoutes = require("./routes/productosRoutes"); // 👈 nueva ruta
+const authRoutes = require("./routes/authRoutes");
+const ordenRoutes = require("./routes/ordenRoutes");
+const productosRoutes = require("./routes/productosRoutes"); // para admin
 
 const app = express();
 const PORT = process.env.PORT || 3000;
 
 // ----- MIDDLEWARES -----
-app.use(cors({
+app.use(
+  cors({
     origin: "*",
     methods: ["GET", "POST", "PUT", "DELETE"],
     allowedHeaders: ["Content-Type", "Authorization"],
-}));
+  })
+);
 
 app.use(express.json());
 
 // Logs de cada petición
 app.use((req, res, next) => {
-    console.log(`${new Date().toISOString()} - ${req.method} ${req.url}`);
-    next();
+  console.log(`${new Date().toISOString()} - ${req.method} ${req.url}`);
+  next();
 });
 
 // Archivos estáticos
@@ -50,46 +42,40 @@ app.use("/img", express.static("img")); // carpeta estática de main
 
 // ----- RUTAS -----
 
-
-// main
+// main (contacto y suscripción)
 app.use("/api/contacto", contactoRoutes);
 app.use("/api/suscripcion", suscripcionRoutes);
 
-// categorías (antes las llamabas allRoutes en /api)
+// auth
+app.use("/api/auth", authRoutes);
+
+// categorías / marcas / productos tienda (archivo categoriasRoutes)
 app.use("/api", categoriasRoutes);
 
-app.use('/api/auth', authRoutes);
+// órdenes (si las rutas están montadas ya con /ordenes dentro del router)
+app.use("/api", ordenRoutes);
 
-// Todas las rutas en un solo archivo
-app.use('/api', allRoutes);
-app.use('/api', ordenRoutes); //para api ordenes
-
-
-// productos (para el panel de admin)
+// productos para panel admin
 app.use("/api/productos", productosRoutes);
 
 // Ruta de prueba
 app.get("/test", (req, res) => {
-    console.log("Ruta /test accedida");
-    res.json({ message: "Backend funcionando!", time: new Date() });
+  console.log("Ruta /test accedida");
+  res.json({ message: "Backend funcionando!", time: new Date() });
 });
 
 // ----- TEST CONEXIÓN BD -----
 async function testConnection() {
-    try {
-        const [rows] = await pool.query("SELECT 1 + 1 AS result");
-        console.log("Conexión OK:", rows[0].result);
-    } catch (e) {
-        console.log("Error conexión:", e.message);
-    }
+  try {
+    const [rows] = await pool.query("SELECT 1 + 1 AS result");
+    console.log("Conexión OK:", rows[0].result);
+  } catch (e) {
+    console.log("Error conexión:", e);
+  }
 }
 
 // ----- ARRANQUE SERVIDOR -----
 app.listen(PORT, async () => {
-    console.log(`Servidor corriendo en http://localhost:${PORT}`);
-    await testConnection();
+  console.log(`Servidor corriendo en http://localhost:${PORT}`);
+  await testConnection();
 });
-
-
- 
-

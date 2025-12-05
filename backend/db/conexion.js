@@ -1,18 +1,15 @@
-const mysql = require("mysql2");
+// backend/db/conexion.js
+require("dotenv").config();
+const mysql = require("mysql2/promise");
 
-const conexion = mysql.createConnection({
-    host: "localhost",
-    user: "root",          // tu usuario de MySQL
-    password: "",          // tu contraseña (en XAMPP suele ser "")
-    database: "retro_music_db", // ⚠️ nombre exacto de tu BD
+const pool = mysql.createPool({
+  host: process.env.DB_HOST || "localhost",
+  user: process.env.DB_USER || "root",
+  password: process.env.DB_PASSWORD || "",
+  database: process.env.DB_NAME || "retro_music_db",
+  waitForConnections: true,
+  connectionLimit: 10,
+  queueLimit: 0,
 });
 
-conexion.connect((error) => {
-    if (error) {
-        console.error("Error al conectar a la BD:", error);
-        return;
-    }
-    console.log("Conectado a la base de datos retro_music_db ✅");
-});
-
-module.exports = conexion;
+module.exports = pool;
