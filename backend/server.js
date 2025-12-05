@@ -14,7 +14,10 @@ const contactoRoutes = require("./routes/contactoRoutes");
 const suscripcionRoutes = require("./routes/suscripcionRoutes");
 const authRoutes = require("./routes/authRoutes");
 const ordenRoutes = require("./routes/ordenRoutes");
-const productosRoutes = require("./routes/productosRoutes"); // para admin
+const productosRoutes = require("./routes/productosRoutes"); // CRUD admin productos
+
+// Middlewares de autenticación
+const { authMiddleware, soloAdmin } = require("./middlewares/authMiddleware");
 
 const app = express();
 const PORT = process.env.PORT || 4000;
@@ -49,12 +52,18 @@ app.use("/api/suscripcion", suscripcionRoutes);
 // auth
 app.use("/api/auth", authRoutes);
 
-// tienda (categorías, marcas, productos “públicos”)
+// tienda (categorías, órdenes, etc. “públicos”)
 app.use("/api", categoriasRoutes);
 app.use("/api", ordenRoutes);
 
-// admin: CRUD de productos
-app.use("/api/admin/productos", productosRoutes);
+// admin: CRUD de productos (protegido con JWT y rol admin)
+app.use(
+  "/api/admin/productos",
+  authMiddleware, // verifica token
+  soloAdmin,      // verifica rol 'admin'
+  productosRoutes // rutas CRUD
+);
+
 // Ruta de prueba
 app.get("/test", (req, res) => {
   console.log("Ruta /test accedida");
