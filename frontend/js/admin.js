@@ -1,7 +1,8 @@
 // ------------------ CONFIG API + DATOS ------------------
 
 // Ajusta el puerto si tu backend usa otro
-const API_URL_PRODUCTS = "http://localhost:3000/api/productos";
+const API_URL_PRODUCTS = "http://localhost:4000/api/admin/productos";
+
 
 let products = [];   // vendrán de la BD
 let sales = [];

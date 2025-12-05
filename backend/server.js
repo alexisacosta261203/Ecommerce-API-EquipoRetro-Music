@@ -17,7 +17,7 @@ const ordenRoutes = require("./routes/ordenRoutes");
 const productosRoutes = require("./routes/productosRoutes"); // para admin
 
 const app = express();
-const PORT = process.env.PORT || 3000;
+const PORT = process.env.PORT || 4000;
 
 // ----- MIDDLEWARES -----
 app.use(
@@ -49,15 +49,12 @@ app.use("/api/suscripcion", suscripcionRoutes);
 // auth
 app.use("/api/auth", authRoutes);
 
-// categorías / marcas / productos tienda (archivo categoriasRoutes)
+// tienda (categorías, marcas, productos “públicos”)
 app.use("/api", categoriasRoutes);
-
-// órdenes (si las rutas están montadas ya con /ordenes dentro del router)
 app.use("/api", ordenRoutes);
 
-// productos para panel admin
-app.use("/api/productos", productosRoutes);
-
+// admin: CRUD de productos
+app.use("/api/admin/productos", productosRoutes);
 // Ruta de prueba
 app.get("/test", (req, res) => {
   console.log("Ruta /test accedida");

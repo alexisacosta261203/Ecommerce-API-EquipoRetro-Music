@@ -637,9 +637,9 @@ function abrirModalProducto(producto) {
         if (producto.imagen.startsWith('http')) {
             imagenUrl = producto.imagen;
         } else if (producto.imagen.startsWith('/')) {
-            imagenUrl = `http://localhost:3000${producto.imagen}`;
+            imagenUrl = `http://localhost:4000${producto.imagen}`;
         } else {
-            imagenUrl = `http://localhost:3000/uploads/productos/${producto.imagen}`;
+            imagenUrl = `http://localhost:4000/uploads/productos/${producto.imagen}`;
         }
     } else {
         imagenUrl = 'https://via.placeholder.com/500x400/4B5563/FFFFFF?text=Sin+Imagen';
@@ -835,7 +835,7 @@ function mostrarNotificacion(mensaje) {
     setTimeout(() => {
         notificacion.style.animation = 'slideOut 0.3s ease';
         setTimeout(() => notificacion.remove(), 300);
-    }, 3000);
+    }, 4000);
 }
 
 // Actualizar contador del carrito
