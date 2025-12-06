@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<html lang="es">
+<html lang="es" data-theme="light">
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
@@ -70,6 +70,15 @@
             <input type="password" id="loginPassword" name="password" required>
           </div>
 
+          <!-- CAPTCHA simple -->
+          <div id="captchaBox" class="captcha-row">
+            <label for="captchaInput">Verificación:</label>
+            <div class="captcha-op">
+              <span id="captchaText"></span>
+              <input type="number" id="captchaInput" required placeholder="Resultado">
+            </div>
+          </div>
+
           <button type="submit" class="auth-button" id="btnLogin">
             Iniciar sesión
           </button>
@@ -78,8 +87,7 @@
         </form>
 
         <p class="auth-footer-note">
-          Si olvidaste tu contraseña, más adelante aquí podemos conectar
-          la opción de recuperación por correo.
+          <a href="recuperar.html">¿Olvidaste tu contraseña?</a>
         </p>
       </section>
     </div>
@@ -90,8 +98,8 @@
   </footer>
 
   <!-- Accesibilidad -->
-  <script src="js/accessibility.js" defer></script>
+  <script src="js/accessibility.js"></script>
   <!-- Lógica de login/registro -->
-  <script src="js/auth.js" defer></script>
+  <script src="js/auth.js"></script>
 </body>
 </html>

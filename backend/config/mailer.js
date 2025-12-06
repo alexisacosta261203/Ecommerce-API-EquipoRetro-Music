@@ -1,12 +1,23 @@
-require('dotenv').config();
-const nodemailer = require('nodemailer');
+// backend/config/mailer.js
+const nodemailer = require("nodemailer");
 
 const transporter = nodemailer.createTransport({
-    service: "gmail",
-    auth: {
-        user: process.env.EMAIL,
-        pass: process.env.EMAIL_PASS
-    }
+  // Usaremos Gmail como servicio SMTP (más simple que host/port manuales)
+  service: "gmail",
+  auth: {
+    user: process.env.EMAIL,
+    pass: process.env.EMAIL_PASS,
+  },
 });
+
+// Verificar conexión al arrancar
+transporter
+  .verify()
+  .then(() => {
+    console.log("✅ Mailer listo: conexión SMTP correcta");
+  })
+  .catch((err) => {
+    console.error("❌ Error verificando transporter SMTP:", err);
+  });
 
 module.exports = transporter;

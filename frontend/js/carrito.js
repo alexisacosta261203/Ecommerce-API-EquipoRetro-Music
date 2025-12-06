@@ -1,4 +1,7 @@
-// URL base del backend
+// ===============================
+// Pantalla de carrito (carrito.html)
+// ===============================
+
 const API_URL = "http://localhost:4000/api";
 const IVA = 0.16;
 
@@ -12,38 +15,48 @@ const cartTotalEl = document.getElementById("cartTotal");
 const cartMensaje = document.getElementById("cartMensaje");
 const btnConfirmar = document.getElementById("btnConfirmarCompra");
 
-// Render principal
+// Render principal del carrito en la tabla
 async function cargarCarrito() {
-  const carrito = obtenerCarrito(); // viene de cart.js
+  const carrito = obtenerCarrito(); // función viene de cart.js
 
   if (!carrito || carrito.length === 0) {
-    cartEmpty.style.display = "block";
-    cartContent.style.display = "none";
-    cartMensaje.textContent = "";
+    if (cartEmpty) cartEmpty.style.display = "block";
+    if (cartContent) cartContent.style.display = "none";
+    if (cartMensaje) cartMensaje.textContent = "Tu carrito está vacío.";
+    if (cartSubtotalEl) cartSubtotalEl.textContent = "$0.00";
+    if (cartIvaEl) cartIvaEl.textContent = "$0.00";
+    if (cartTotalEl) cartTotalEl.textContent = "$0.00";
     return;
   }
 
-  cartEmpty.style.display = "none";
-  cartContent.style.display = "block";
-
   try {
+    // 1) Obtener todos los productos del backend
     const res = await fetch(`${API_URL}/productos`);
-    const productos = await res.json();
+    if (!res.ok) {
+      throw new Error("No se pudieron cargar los productos");
+    }
+    const data = await res.json();
+    const productos = data.productos || data || [];
 
-    const mapa = {};
-    productos.forEach(p => { mapa[p.id] = p; });
+    // 2) Mapear productos por id
+    const mapaProductos = new Map();
+    productos.forEach((p) => {
+      mapaProductos.set(p.id, p);
+    });
 
-    // Construir filas
-    cartBody.innerHTML = "";
+    // 3) Construir tabla y totales
     let subtotal = 0;
+    if (cartBody) cartBody.innerHTML = "";
 
-    carrito.forEach(item => {
-      const prod = mapa[item.productoId];
+    carrito.forEach((item) => {
+      const prod = mapaProductos.get(item.productoId);
       if (!prod) return;
 
       const precio = Number(prod.precio);
       const sub = precio * item.cantidad;
       subtotal += sub;
+
+      if (!cartBody) return;
 
       const tr = document.createElement("tr");
       tr.innerHTML = `
@@ -66,41 +79,46 @@ async function cargarCarrito() {
       cartBody.appendChild(tr);
     });
 
-    const iva = +(subtotal * IVA).toFixed(2);
-    const total = +(subtotal + iva).toFixed(2);
+    const iva = subtotal * IVA;
+    const total = subtotal + iva;
 
-    cartSubtotalEl.textContent = `$${subtotal.toFixed(2)}`;
-    cartIvaEl.textContent = `$${iva.toFixed(2)}`;
-    cartTotalEl.textContent = `$${total.toFixed(2)}`;
+    if (cartSubtotalEl) cartSubtotalEl.textContent = `$${subtotal.toFixed(2)}`;
+    if (cartIvaEl) cartIvaEl.textContent = `$${iva.toFixed(2)}`;
+    if (cartTotalEl) cartTotalEl.textContent = `$${total.toFixed(2)}`;
 
-    // Eventos de + / - / quitar
-    cartBody.querySelectorAll("button").forEach(btn => {
-      btn.addEventListener("click", manejarCambioCantidad);
-    });
-
+    if (cartEmpty) cartEmpty.style.display = "none";
+    if (cartContent) cartContent.style.display = "block";
+    if (cartMensaje) cartMensaje.textContent = "";
   } catch (err) {
-    console.error("Error cargando carrito:", err);
-    cartMensaje.textContent = "Error al cargar productos del carrito.";
-    cartMensaje.className = "cart-message error";
+    console.error(err);
+    if (cartMensaje) {
+      cartMensaje.textContent = "Error al cargar el carrito. Intenta más tarde.";
+    }
   }
 }
 
+// Manejar click en +, -, eliminar
 function manejarCambioCantidad(e) {
-  const btn = e.currentTarget;
+  const btn = e.target.closest("button");
+  if (!btn) return;
+
   const accion = btn.getAttribute("data-accion");
   const id = parseInt(btn.getAttribute("data-id"));
-  if (Number.isNaN(id)) return;
+  if (!accion || Number.isNaN(id)) return;
 
   let carrito = obtenerCarrito();
-  const item = carrito.find(i => i.productoId === id);
-  if (!item) return;
+  const idx = carrito.findIndex((i) => i.productoId === id);
+  if (idx === -1) return;
 
   if (accion === "mas") {
-    item.cantidad += 1;
+    carrito[idx].cantidad += 1;
   } else if (accion === "menos") {
-    item.cantidad = Math.max(1, item.cantidad - 1);
+    carrito[idx].cantidad -= 1;
+    if (carrito[idx].cantidad <= 0) {
+      carrito.splice(idx, 1);
+    }
   } else if (accion === "eliminar") {
-    carrito = carrito.filter(i => i.productoId !== id);
+    carrito = carrito.filter((i) => i.productoId !== id);
   }
 
   guardarCarrito(carrito);
@@ -110,77 +128,66 @@ function manejarCambioCantidad(e) {
 
 // Confirmar compra -> POST /api/ordenes
 async function confirmarCompra() {
-  cartMensaje.textContent = "";
-  cartMensaje.className = "cart-message";
+  const carrito = obtenerCarrito();
 
-  if (typeof estaLogueado === "function" && !estaLogueado()) {
-    alert("Debes iniciar sesión para confirmar la compra.");
-    window.location.href = "login.html";
+  if (!carrito || carrito.length === 0) {
+    alert("Tu carrito está vacío.");
     return;
   }
 
   const token = localStorage.getItem("authToken");
   if (!token) {
-    alert("Sesión no encontrada. Vuelve a iniciar sesión.");
+    alert("Debes iniciar sesión para finalizar la compra.");
     window.location.href = "login.html";
     return;
   }
 
-  const carrito = obtenerCarrito();
-  if (!carrito || carrito.length === 0) {
-    cartMensaje.textContent = "Tu carrito está vacío.";
-    cartMensaje.className = "cart-message error";
-    return;
-  }
-
   try {
-    btnConfirmar.disabled = true;
-    cartMensaje.textContent = "Procesando orden...";
-    cartMensaje.className = "cart-message";
-
     const res = await fetch(`${API_URL}/ordenes`, {
       method: "POST",
       headers: {
         "Content-Type": "application/json",
-        "Authorization": `Bearer ${token}`
+        Authorization: `Bearer ${token}`
       },
-      body: JSON.stringify({
-        items: carrito.map(i => ({
-          productoId: i.productoId,
-          cantidad: i.cantidad
-        }))
-      })
+      body: JSON.stringify({ items: carrito })
     });
 
-    const data = await res.json();
-
-    if (!res.ok) {
-      console.error("Error al crear orden:", data);
-      cartMensaje.textContent = data.error || "No se pudo crear la orden.";
-      cartMensaje.className = "cart-message error";
+    // Si el token ya no es válido
+    if (res.status === 401 || res.status === 403) {
+      alert("Tu sesión ha expirado. Vuelve a iniciar sesión.");
+      localStorage.removeItem("authToken");
+      localStorage.removeItem("usuarioActual");
+      window.location.href = "login.html";
       return;
     }
 
-    // Éxito
-    cartMensaje.textContent = `Orden #${data.orden.id} creada correctamente. Total: $${data.orden.total.toFixed(2)}`;
-    cartMensaje.className = "cart-message ok";
+    if (!res.ok) {
+      const errData = await res.json().catch(() => ({}));
+      const msg =
+        errData.error || errData.message || "Error al crear la orden";
+      throw new Error(msg);
+    }
 
-    // Vaciar carrito
+    // Si se creó la orden correctamente, vaciamos el carrito
     guardarCarrito([]);
     actualizarContadorCarrito();
-    cargarCarrito();
+    await cargarCarrito();
 
+    alert("Compra confirmada. Te mostraremos el resumen de tus órdenes.");
+    window.location.href = "mis-ordenes.html";
   } catch (err) {
     console.error("Error en confirmarCompra:", err);
-    cartMensaje.textContent = "Error de conexión al crear la orden.";
-    cartMensaje.className = "cart-message error";
-  } finally {
-    btnConfirmar.disabled = false;
+    alert("No se pudo completar la compra: " + err.message);
   }
 }
+// Verificar si el usuario está logueado; si no, redirigir a login
 
 // Inicializar
 document.addEventListener("DOMContentLoaded", () => {
+  if (cartBody) {
+    cartBody.addEventListener("click", manejarCambioCantidad);
+  }
+
   cargarCarrito();
 
   if (btnConfirmar) {

@@ -1,0 +1,99 @@
+<!DOCTYPE html>
+<html lang="es" data-theme="light">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Retro Music - Detalle de producto</title>
+
+  <!-- Estilos (mismo orden que en index) -->
+  <link rel="stylesheet" href="css/accessibility.css" />
+  <link rel="stylesheet" href="css/estilos.css" />
+</head>
+<body>
+  <!-- Header igual al resto -->
+  <header class="top-header">
+    <div class="logo-derecha">
+      <img src="img/logo.png" alt="Logo Retro Music" class="logo-img" />
+      <h2 class="logo-text">
+        <span class="retro">RETRO</span><span class="music">MUSIC</span>
+      </h2>
+    </div>
+
+    <nav class="menu-derecha">
+      <ul>
+        <li><a href="index.html">Inicio</a></li>
+        <li><a href="productos.html">Tienda</a></li>
+        <li><a href="marcas.html">Marcas</a></li>
+        <li><a href="nosotros.html">Nosotros</a></li>
+        <li><a href="contacto.html">Contacto</a></li>
+        <li id="menu-auth"></li>
+        <li>
+          <a href="carrito.html" class="cart-icon-link">
+            🛒 <span id="contadorCarrito">0</span>
+          </a>
+        </li>
+      </ul>
+    </nav>
+  </header>
+
+  <main class="main-content">
+    <section class="product-detail-section">
+      <div id="productoMensaje" class="cart-message"></div>
+
+      <div id="productoCargando" class="cart-message">
+        Cargando información del producto...
+      </div>
+
+      <div id="productoContent" class="product-detail-container" style="display: none;">
+        <div class="product-detail-image">
+          <img id="productoImagen" src="" alt="Producto" />
+        </div>
+
+        <div class="product-detail-info">
+          <h1 id="productoNombre"></h1>
+          <p id="productoMarca" class="product-detail-brand"></p>
+          <p id="productoDescripcion" class="product-detail-description"></p>
+
+          <p class="product-detail-price-label">Precio:</p>
+          <p id="productoPrecio" class="product-detail-price"></p>
+
+          <div class="product-detail-actions">
+            <button id="btnAgregarCarritoDetalle" class="btn-primary">
+              Agregar al carrito
+            </button>
+            <a href="productos.html" class="cart-back-button">
+              Seguir comprando
+            </a>
+          </div>
+        </div>
+      </div>
+    </section>
+  </main>
+
+  <footer class="main-footer">
+    <div class="footer-content">
+      <div class="footer-info">
+        <h4>Retro Music</h4>
+        <p>Donde la música y el artista se vuelven uno solo, los mejores instrumentos que verás en tu vida.</p>
+      </div>
+
+      <div class="footer-links">
+        <a href="#">Términos y Condiciones</a>
+        <a href="#">Política de Privacidad</a>
+      </div>
+    </div>
+
+    <div class="footer-bottom">
+      © 2025 Por RetroMusic - Proyecto académico.
+    </div>
+  </footer>
+
+  <!-- Scripts globales -->
+  <script src="js/accessibility.js"></script>
+  <script src="js/session.js"></script>
+
+  <!-- Scripts específicos de esta página -->
+  <script src="js/cart.js"></script>      <!-- funciones de carrito -->
+  <script src="js/producto.js"></script>  <!-- script de esta pantalla -->
+</body>
+</html>

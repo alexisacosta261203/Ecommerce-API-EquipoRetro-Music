@@ -1,0 +1,96 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Retro Music - Mis órdenes</title>
+
+  <link rel="stylesheet" href="css/accessibility.css" />
+  <link rel="stylesheet" href="css/estilos.css" />
+</head>
+<body>
+  <!-- Header igual al de index/carrito -->
+  <header class="top-header">
+    <div class="logo-derecha">
+      <img src="img/logo.png" alt="Logo Retro Music" class="logo-img" />
+      <h2 class="logo-text">
+        <span class="retro">RETRO</span><span class="music">MUSIC</span>
+      </h2>
+    </div>
+
+    <nav class="nav-menu">
+      <ul>
+        <li><a href="index.html">Inicio</a></li>
+        <li><a href="productos.html">Productos</a></li>
+        <li><a href="marcas.html">Marcas</a></li>
+        <li><a href="nosotros.html">Nosotros</a></li>
+        <li><a href="contacto.html">Contacto</a></li>
+        <li id="menu-auth"><a href="login.html">Iniciar sesión</a></li>
+        <li>
+          <a href="carrito.html" class="cart-icon-link">
+            🛒 <span id="contadorCarrito">0</span>
+          </a>
+        </li>
+      </ul>
+    </nav>
+  </header>
+
+  <main class="main-content">
+    <section class="cart-section">
+      <h1>Mis órdenes</h1>
+
+      <!-- Mensajes -->
+      <p id="ordenesMensaje" class="cart-message"></p>
+
+      <!-- Bloque cuando no hay órdenes -->
+      <div id="ordenesEmpty" class="cart-empty" style="display: none;">
+        <p>No has realizado ninguna compra todavía.</p>
+        <a href="productos.html" class="cart-back-button">Ir a comprar</a>
+      </div>
+
+      <!-- Tabla con órdenes -->
+      <div id="ordenesContent" style="display: none;">
+        <table class="cart-table">
+          <thead>
+            <tr>
+              <th>ID</th>
+              <th>Fecha</th>
+              <th>Subtotal</th>
+              <th>IVA</th>
+              <th>Total</th>
+              <th>Estado</th>
+            </tr>
+          </thead>
+          <tbody id="ordenesBody">
+            <!-- Se llena desde JS -->
+          </tbody>
+        </table>
+      </div>
+    </section>
+  </main>
+
+  <footer class="main-footer">
+    <div class="footer-content">
+      <div class="footer-info">
+        <h4>Retro Music</h4>
+        <p>Donde la música y el artista se vuelven uno solo, los mejores instrumentos que verás en tu vida.</p>
+      </div>
+
+      <div class="footer-links">
+        <a href="#">Términos y Condiciones</a>
+        <a href="#">Política de Privacidad</a>
+      </div>
+    </div>
+
+    <div class="footer-bottom">
+      © 2025 Por RetroMusic - Proyecto académico.
+    </div>
+  </footer>
+
+  <!-- Scripts -->
+  <script src="js/accessibility.js"></script>
+  <script src="js/session.js"></script>
+  <script src="js/cart.js"></script>
+  <script src="js/mis-ordenes.js"></script>
+</body>
+</html>

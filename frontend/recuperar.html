@@ -1,0 +1,106 @@
+<!DOCTYPE html>
+<html lang="es" data-theme="light">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Retro Music - Iniciar sesión / Registro</title>
+
+  <!-- Accesibilidad y estilos específicos de auth -->
+  <link rel="stylesheet" href="css/accessibility.css">
+  <link rel="stylesheet" href="css/auth.css">
+</head>
+<body>
+  <header class="auth-header">
+    <div>
+      <strong>Retro Music</strong> · Cuenta
+    </div>
+    <nav>
+      <a href="index.html">← Volver a inicio</a>
+    </nav>
+  </header>
+
+  <main class="auth-main">
+    <div class="auth-container">
+      <!-- Registro -->
+      <section class="auth-card">
+        <h2>Crear cuenta</h2>
+        <p>Regístrate para guardar tu información y usar el carrito.</p>
+
+        <form id="formRegistro">
+          <div class="auth-form-group">
+            <label for="regNombre">Nombre completo</label>
+            <input type="text" id="regNombre" name="nombre" required>
+          </div>
+
+          <div class="auth-form-group">
+            <label for="regEmail">Correo electrónico</label>
+            <input type="email" id="regEmail" name="email" required>
+          </div>
+
+          <div class="auth-form-group">
+            <label for="regPassword">Contraseña</label>
+            <input type="password" id="regPassword" name="password" required minlength="6">
+          </div>
+
+          <button type="submit" class="auth-button" id="btnRegistro">
+            Registrarme
+          </button>
+
+          <div id="registroMensaje" class="auth-message"></div>
+        </form>
+
+        <p class="auth-footer-note">
+          Usaremos tu correo solo para crear tu cuenta y gestionar tus compras.
+        </p>
+      </section>
+
+      <!-- Login -->
+      <section class="auth-card">
+        <h2>Iniciar sesión</h2>
+        <p>Accede con tu correo y contraseña.</p>
+
+        <form id="formLogin">
+          <div class="auth-form-group">
+            <label for="loginEmail">Correo electrónico</label>
+            <input type="email" id="loginEmail" name="email" required>
+          </div>
+
+          <div class="auth-form-group">
+            <label for="loginPassword">Contraseña</label>
+            <input type="password" id="loginPassword" name="password" required>
+          </div>
+
+          <!-- CAPTCHA simple -->
+          <div id="captchaBox" class="captcha-row">
+            <label for="captchaInput">Verificación:</label>
+            <div class="captcha-op">
+              <span id="captchaText"></span>
+              <input type="number" id="captchaInput" required placeholder="Resultado">
+            </div>
+          </div>
+
+          <button type="submit" class="auth-button" id="btnLogin">
+            Iniciar sesión
+          </button>
+
+          <div id="loginMensaje" class="auth-message"></div>
+        </form>
+
+        <p class="auth-footer-note">
+          Si olvidaste tu contraseña, más adelante aquí podemos conectar
+          la opción de recuperación por correo.
+        </p>
+      </section>
+    </div>
+  </main>
+
+  <footer class="auth-footer">
+    Retro Music · Proyecto Sistemas Web · 2025
+  </footer>
+
+  <!-- Accesibilidad -->
+  <script src="js/accessibility.js"></script>
+  <!-- Lógica de login/registro -->
+  <script src="js/auth.js"></script>
+</body>
+</html>
