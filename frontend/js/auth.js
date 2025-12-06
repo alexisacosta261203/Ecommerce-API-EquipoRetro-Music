@@ -1,32 +1,68 @@
 // ===============================
-// Autenticación (login / registro)
+// Autenticación (login / registro) + Captcha
 // ===============================
 
 const AUTH_API_URL = "http://localhost:4000/api/auth";
 
-const loginForm = document.getElementById("loginForm");
-const registerForm = document.getElementById("registerForm");
-const loginMessage = document.getElementById("loginMessage");
-const registerMessage = document.getElementById("registerMessage");
+// ---- Referencias al DOM (coinciden con login.html) ----
 
+// Formularios
+const formLogin = document.getElementById("formLogin");
+const formRegistro = document.getElementById("formRegistro");
+
+// Mensajes
+const loginMensaje = document.getElementById("loginMensaje");
+const registroMensaje = document.getElementById("registroMensaje");
+
+// Campos de registro
+const regNombre = document.getElementById("regNombre");
+const regEmail = document.getElementById("regEmail");
+const regPassword = document.getElementById("regPassword");
+
+// Campos de login
+const loginEmail = document.getElementById("loginEmail");
+const loginPassword = document.getElementById("loginPassword");
+
+// Captcha
+const captchaBox = document.getElementById("captchaBox");
+const captchaText = document.getElementById("captchaText");
+const captchaInput = document.getElementById("captchaInput");
+let resultadoCaptcha = null;
+
+// ===============================
 // Utilidades de UI
-function mostrarMensajeLogin(msg, tipo = "error") {
-  if (!loginMessage) return;
-  loginMessage.textContent = msg;
-  loginMessage.className = tipo === "ok" ? "form-message success" : "form-message error";
+// ===============================
+
+function mostrarMensaje(elemento, msg, tipo = "error") {
+  if (!elemento) return;
+  elemento.textContent = msg || "";
+  // Mantén la clase base para que respete el estilo definido en auth.css
+  elemento.className = "auth-message";
+  if (tipo === "ok") {
+    elemento.classList.add("auth-message--ok");
+  } else if (tipo === "error") {
+    elemento.classList.add("auth-message--error");
+  }
 }
 
-function mostrarMensajeRegistro(msg, tipo = "error") {
-  if (!registerMessage) return;
-  registerMessage.textContent = msg;
-  registerMessage.className = tipo === "ok" ? "form-message success" : "form-message error";
-}
-
-// Validaciones básicas
 function esCorreoValido(email) {
-  // Regex sencilla, suficiente para front
   const re = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
   return re.test(email);
+}
+
+// ===============================
+// Captcha
+// ===============================
+
+function generarCaptcha() {
+  if (!captchaBox || !captchaText || !captchaInput) return;
+
+  const a = Math.floor(Math.random() * 10) + 1; // 1–10
+  const b = Math.floor(Math.random() * 10) + 1; // 1–10
+
+  resultadoCaptcha = a + b;
+  captchaText.textContent = `${a} + ${b} =`;
+  captchaInput.value = "";
 }
 
 // ===============================
@@ -35,29 +71,43 @@ function esCorreoValido(email) {
 
 async function manejarLogin(event) {
   event.preventDefault();
-  if (!loginForm) return;
+  if (!formLogin) return;
 
-  const email = loginForm.email?.value.trim();
-  const password = loginForm.password?.value.trim();
+  const email = loginEmail?.value.trim();
+  const password = loginPassword?.value.trim();
 
   // Validaciones front
   if (!email || !password) {
-    mostrarMensajeLogin("Por favor ingresa tu correo y contraseña.");
+    mostrarMensaje(loginMensaje, "Por favor ingresa tu correo y contraseña.");
     return;
   }
 
   if (!esCorreoValido(email)) {
-    mostrarMensajeLogin("Por favor ingresa un correo electrónico válido.");
+    mostrarMensaje(loginMensaje, "Por favor ingresa un correo electrónico válido.");
     return;
   }
 
   if (password.length < 6) {
-    mostrarMensajeLogin("La contraseña debe tener al menos 6 caracteres.");
+    mostrarMensaje(loginMensaje, "La contraseña debe tener al menos 6 caracteres.");
     return;
   }
 
+  // Validar captcha
+  if (captchaInput && resultadoCaptcha !== null) {
+    const valorCaptcha = parseInt(captchaInput.value, 10);
+    if (Number.isNaN(valorCaptcha) || valorCaptcha !== resultadoCaptcha) {
+      mostrarMensaje(
+        loginMensaje,
+        "Verificación incorrecta. Resuelve la suma correctamente.",
+        "error"
+      );
+      generarCaptcha();
+      return;
+    }
+  }
+
   try {
-    mostrarMensajeLogin("Iniciando sesión...", "ok");
+    mostrarMensaje(loginMensaje, "Iniciando sesión...", "ok");
 
     const res = await fetch(`${AUTH_API_URL}/login`, {
       method: "POST",
@@ -69,13 +119,14 @@ async function manejarLogin(event) {
 
     if (!res.ok) {
       const msg = data.error || data.message || "Error al iniciar sesión.";
-      mostrarMensajeLogin(msg);
+      mostrarMensaje(loginMensaje, msg, "error");
+      generarCaptcha();
       return;
     }
 
-    // Esperamos { token, usuario }
     if (!data.token || !data.usuario) {
-      mostrarMensajeLogin("Respuesta del servidor inválida.");
+      mostrarMensaje(loginMensaje, "Respuesta del servidor inválida.", "error");
+      generarCaptcha();
       return;
     }
 
@@ -83,7 +134,7 @@ async function manejarLogin(event) {
     localStorage.setItem("authToken", data.token);
     localStorage.setItem("usuarioActual", JSON.stringify(data.usuario));
 
-    mostrarMensajeLogin("Inicio de sesión correcto. Redirigiendo...", "ok");
+    mostrarMensaje(loginMensaje, "Inicio de sesión correcto. Redirigiendo...", "ok");
 
     // Redirigir según rol
     setTimeout(() => {
@@ -95,7 +146,8 @@ async function manejarLogin(event) {
     }, 1000);
   } catch (err) {
     console.error("Error en login:", err);
-    mostrarMensajeLogin("Error de conexión. Intenta más tarde.");
+    mostrarMensaje(loginMensaje, "Error de conexión. Intenta más tarde.", "error");
+    generarCaptcha();
   }
 }
 
@@ -105,41 +157,34 @@ async function manejarLogin(event) {
 
 async function manejarRegistro(event) {
   event.preventDefault();
-  if (!registerForm) return;
+  if (!formRegistro) return;
 
-  const nombre = registerForm.nombre?.value.trim();
-  const email = registerForm.email?.value.trim();
-  const password = registerForm.password?.value.trim();
-  const confirmarPassword = registerForm.confirmarPassword?.value.trim();
+  const nombre = regNombre?.value.trim();
+  const email = regEmail?.value.trim();
+  const password = regPassword?.value.trim();
 
-  // Validaciones front
-  if (!nombre || !email || !password || !confirmarPassword) {
-    mostrarMensajeRegistro("Todos los campos son obligatorios.");
+  if (!nombre || !email || !password) {
+    mostrarMensaje(registroMensaje, "Todos los campos son obligatorios.");
     return;
   }
 
   if (nombre.length < 3) {
-    mostrarMensajeRegistro("El nombre debe tener al menos 3 caracteres.");
+    mostrarMensaje(registroMensaje, "El nombre debe tener al menos 3 caracteres.");
     return;
   }
 
   if (!esCorreoValido(email)) {
-    mostrarMensajeRegistro("Por favor ingresa un correo electrónico válido.");
+    mostrarMensaje(registroMensaje, "Por favor ingresa un correo electrónico válido.");
     return;
   }
 
   if (password.length < 6) {
-    mostrarMensajeRegistro("La contraseña debe tener al menos 6 caracteres.");
-    return;
-  }
-
-  if (password !== confirmarPassword) {
-    mostrarMensajeRegistro("Las contraseñas no coinciden.");
+    mostrarMensaje(registroMensaje, "La contraseña debe tener al menos 6 caracteres.");
     return;
   }
 
   try {
-    mostrarMensajeRegistro("Creando cuenta...", "ok");
+    mostrarMensaje(registroMensaje, "Creando cuenta...", "ok");
 
     const res = await fetch(`${AUTH_API_URL}/register`, {
       method: "POST",
@@ -151,17 +196,20 @@ async function manejarRegistro(event) {
 
     if (!res.ok) {
       const msg = data.error || data.message || "Error al registrar usuario.";
-      mostrarMensajeRegistro(msg);
+      mostrarMensaje(registroMensaje, msg, "error");
       return;
     }
 
-    mostrarMensajeRegistro("Registro exitoso. Ahora puedes iniciar sesión.", "ok");
+    mostrarMensaje(
+      registroMensaje,
+      "Registro exitoso. Ahora puedes iniciar sesión.",
+      "ok"
+    );
 
-    // Opcional: limpiar formulario
-    registerForm.reset();
+    formRegistro.reset();
   } catch (err) {
     console.error("Error en registro:", err);
-    mostrarMensajeRegistro("Error de conexión. Intenta más tarde.");
+    mostrarMensaje(registroMensaje, "Error de conexión. Intenta más tarde.", "error");
   }
 }
 
@@ -170,10 +218,12 @@ async function manejarRegistro(event) {
 // ===============================
 
 document.addEventListener("DOMContentLoaded", () => {
-  if (loginForm) {
-    loginForm.addEventListener("submit", manejarLogin);
+  if (formLogin) {
+    formLogin.addEventListener("submit", manejarLogin);
+    generarCaptcha(); // generar la suma cuando carga la página de login
   }
-  if (registerForm) {
-    registerForm.addEventListener("submit", manejarRegistro);
+
+  if (formRegistro) {
+    formRegistro.addEventListener("submit", manejarRegistro);
   }
 });
