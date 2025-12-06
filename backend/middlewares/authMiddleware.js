@@ -2,7 +2,12 @@
 const jwt = require("jsonwebtoken");
 const pool = require("../db/conexion");
 
-// Middleware para validar JWT y adjuntar usuario a req.user
+// ====================================
+// LLAVE JWT UNIFICADA EN TODO EL BACK
+// ====================================
+const JWT_SECRET = process.env.JWT_SECRET || "secreto_super_seguro";
+
+// Middleware de autenticación general
 const authMiddleware = async (req, res, next) => {
   try {
     const authHeader =
@@ -16,49 +21,75 @@ const authMiddleware = async (req, res, next) => {
 
     let decoded;
     try {
-      decoded = jwt.verify(token, process.env.JWT_SECRET);
+      // IMPORTANTE: usar la MISMA llave que al generar el token
+      decoded = jwt.verify(token, JWT_SECRET);
     } catch (err) {
+      console.error("Error al verificar token:", err.message);
       return res
         .status(401)
         .json({ message: "Token inválido o expirado" });
     }
 
-    // Opcional pero recomendado: verificar que el usuario exista en BD
-    const [rows] = await pool.query(
-      "SELECT id, nombre, email, rol FROM usuarios WHERE id = ?",
-      [decoded.id]
-    );
-
-    if (rows.length === 0) {
-      return res.status(401).json({ message: "Usuario no encontrado" });
+    // decoded debe contener: id, nombre, email, rol
+    if (!decoded || !decoded.id) {
+      return res
+        .status(401)
+        .json({ message: "Token inválido (sin id de usuario)" });
     }
 
-    // Guardamos el usuario en req.user para middlewares/rutas siguientes
-    req.user = rows[0];
-    req.usuario = rows[0]; 
+    // Puedes cargar usuario de BD si quieres asegurar que sigue existiendo
+    try {
+      const [rows] = await pool.query(
+        "SELECT id, nombre, email, rol FROM usuarios WHERE id = ?",
+        [decoded.id]
+      );
+
+      if (rows.length === 0) {
+        return res
+          .status(401)
+          .json({ message: "Usuario no encontrado o eliminado" });
+      }
+
+      // Adjuntar usuario a la request para uso en controladores
+      req.user = rows[0];
+      req.usuario = rows[0]; // por compatibilidad si en algún código usas req.usuario
+    } catch (dbError) {
+      console.error("Error consultando usuario en authMiddleware:", dbError);
+      return res
+        .status(500)
+        .json({ message: "Error al validar usuario en BD" });
+    }
 
     next();
   } catch (error) {
     console.error("Error en authMiddleware:", error);
     return res
       .status(500)
-      .json({ message: "Error interno del servidor en autenticación" });
+      .json({ message: "Error interno en el middleware de autenticación" });
   }
 };
 
-// Middleware para permitir solo admins
+// Middleware para rutas solo admin (si lo usas)
 const soloAdmin = (req, res, next) => {
-  if (!req.user) {
-    return res.status(401).json({ message: "No autenticado" });
-  }
+  try {
+    const user = req.user || req.usuario;
+    if (!user) {
+      return res.status(401).json({ message: "No autenticado" });
+    }
 
-  if (req.user.rol !== "admin") {
+    if (user.rol !== "admin") {
+      return res
+        .status(403)
+        .json({ message: "No tienes permisos de administrador" });
+    }
+
+    next();
+  } catch (error) {
+    console.error("Error en soloAdmin:", error);
     return res
-      .status(403)
-      .json({ message: "Acceso restringido a administradores" });
+      .status(500)
+      .json({ message: "Error interno en el middleware soloAdmin" });
   }
-
-  next();
 };
 
 module.exports = {
