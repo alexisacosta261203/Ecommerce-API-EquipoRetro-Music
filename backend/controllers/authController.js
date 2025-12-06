@@ -3,7 +3,9 @@ const bcrypt = require("bcryptjs");
 const jwt = require("jsonwebtoken");
 const { validationResult } = require("express-validator");
 
-// Helper para generar JWT
+// MISMO secreto que en authMiddleware
+const JWT_SECRET = "retro_music_2025_secret";
+
 function generarToken(usuario) {
   return jwt.sign(
     {
@@ -12,10 +14,11 @@ function generarToken(usuario) {
       email: usuario.email,
       rol: usuario.rol,
     },
-    process.env.JWT_SECRET || "secreto_super_seguro",
-    { expiresIn: "2h" } // tiempo de vida del token
+    JWT_SECRET,
+    { expiresIn: "2h" }
   );
 }
+
 
 // ======================= REGISTER =======================
 // POST /api/auth/register
@@ -30,21 +33,22 @@ const register = async (req, res) => {
   try {
     // ¿Ya existe el correo?
     const [rows] = await pool.query(
-      "SELECT id FROM usuarios WHERE email = ? LIMIT 1",
+      "SELECT id FROM usuarios WHERE email = ?",
       [email]
     );
 
     if (rows.length > 0) {
-      return res.status(400).json({ error: "El correo ya está registrado" });
+      return res.status(409).json({
+        error: "El correo ya está registrado",
+      });
     }
 
     // Hashear contraseña
-    const salt = await bcrypt.genSalt(10);
-    const password_hash = await bcrypt.hash(password, salt);
+    const password_hash = await bcrypt.hash(password, 10);
 
-    // Insertar usuario (intentos_fallidos y bloqueado_hasta usan sus defaults)
+    // Crear usuario (intentos_fallidos y bloqueado_hasta para el bloqueo)
     const [result] = await pool.query(
-      "INSERT INTO usuarios (nombre, email, password_hash, rol) VALUES (?, ?, ?, ?)",
+      "INSERT INTO usuarios (nombre, email, password_hash, rol, intentos_fallidos, bloqueado_hasta) VALUES (?, ?, ?, ?, 0, NULL)",
       [nombre, email, password_hash, "cliente"]
     );
 
@@ -55,7 +59,6 @@ const register = async (req, res) => {
       rol: "cliente",
     };
 
-    // Generar token
     const token = generarToken(nuevoUsuario);
 
     res.status(201).json({
@@ -80,35 +83,34 @@ const login = async (req, res) => {
   const { email, password } = req.body;
 
   try {
-    // Buscar usuario
+    // Buscar usuario por correo
     const [rows] = await pool.query(
-      "SELECT id, nombre, email, password_hash, rol, intentos_fallidos, bloqueado_hasta FROM usuarios WHERE email = ? LIMIT 1",
+      `SELECT id, nombre, email, password_hash, rol, intentos_fallidos, bloqueado_hasta
+       FROM usuarios
+       WHERE email = ?`,
       [email]
     );
 
-    // Si no existe, respuesta genérica
     if (rows.length === 0) {
-      return res.status(400).json({ error: "Credenciales incorrectas" });
+      return res.status(401).json({ error: "Credenciales incorrectas" });
     }
 
     const usuario = rows[0];
 
-    // 1) Revisar si está bloqueado
+    // 1) Verificar si está bloqueado
     if (usuario.bloqueado_hasta) {
       const ahora = new Date();
-      const bloqueadoHasta = new Date(usuario.bloqueado_hasta);
+      const bloqueoHasta = new Date(usuario.bloqueado_hasta);
 
-      if (bloqueadoHasta > ahora) {
-        const minutosRestantes = Math.ceil(
-          (bloqueadoHasta.getTime() - ahora.getTime()) / 60000
-        );
+      if (bloqueoHasta > ahora) {
+        const msRestantes = bloqueoHasta.getTime() - ahora.getTime();
+        const minRestantes = Math.ceil(msRestantes / 60000);
+
         return res.status(403).json({
-          error:
-            "Tu cuenta está bloqueada por intentos fallidos. Intenta de nuevo más tarde.",
-          minutosRestantes,
+          error: `Has excedido el número de intentos. Tu cuenta estará bloqueada aproximadamente ${minRestantes} minuto(s).`,
         });
       } else {
-        // Bloqueo vencido → limpiar
+        // El bloqueo ya expiró
         await pool.query(
           "UPDATE usuarios SET intentos_fallidos = 0, bloqueado_hasta = NULL WHERE id = ?",
           [usuario.id]
@@ -119,15 +121,16 @@ const login = async (req, res) => {
     }
 
     // 2) Verificar contraseña
-    const esValida = await bcrypt.compare(password, usuario.password_hash);
+    const esValida =
+      usuario.password_hash &&
+      (await bcrypt.compare(password, usuario.password_hash));
 
     if (!esValida) {
-      // Sumar intento fallido
       const nuevosIntentos = (usuario.intentos_fallidos || 0) + 1;
 
       if (nuevosIntentos >= 3) {
-        // Bloquear 5 minutos
         const bloqueoHasta = new Date(Date.now() + 5 * 60 * 1000);
+
         await pool.query(
           "UPDATE usuarios SET intentos_fallidos = 0, bloqueado_hasta = ? WHERE id = ?",
           [bloqueoHasta, usuario.id]
@@ -138,38 +141,33 @@ const login = async (req, res) => {
             "Has excedido el número de intentos. Tu cuenta estará bloqueada durante 5 minutos.",
         });
       } else {
-        // Solo actualizar contador
         await pool.query(
           "UPDATE usuarios SET intentos_fallidos = ? WHERE id = ?",
           [nuevosIntentos, usuario.id]
         );
 
-        return res.status(400).json({
-          error: "Credenciales incorrectas",
-          intentosRestantes: 3 - nuevosIntentos,
-        });
+        return res.status(401).json({ error: "Credenciales incorrectas" });
       }
     }
 
-    // 3) Contraseña correcta → resetear intentos y desbloqueo
+    // 3) Login correcto → limpiar contador / bloqueo
     await pool.query(
       "UPDATE usuarios SET intentos_fallidos = 0, bloqueado_hasta = NULL WHERE id = ?",
       [usuario.id]
     );
 
-    // Preparar usuario de respuesta
-    const usuarioRespuesta = {
+    const datosUsuario = {
       id: usuario.id,
       nombre: usuario.nombre,
       email: usuario.email,
       rol: usuario.rol,
     };
 
-    const token = generarToken(usuarioRespuesta);
+    const token = generarToken(datosUsuario);
 
     res.json({
-      message: "Login correcto",
-      usuario: usuarioRespuesta,
+      message: "Login exitoso",
+      usuario: datosUsuario,
       token,
     });
   } catch (error) {
@@ -179,10 +177,9 @@ const login = async (req, res) => {
 };
 
 // ======================= PERFIL =======================
-// GET /api/auth/me (o /perfil)  (requiere middleware auth)
 const perfil = async (req, res) => {
   res.json({
-    usuario: req.usuario,
+    usuario: req.user || req.usuario || null,
   });
 };
 

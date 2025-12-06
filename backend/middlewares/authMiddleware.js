@@ -2,6 +2,9 @@
 const jwt = require("jsonwebtoken");
 const pool = require("../db/conexion");
 
+// Usa el mismo secreto en TODO el backend
+const JWT_SECRET = "retro_music_2025_secret";
+
 // Middleware para validar JWT y adjuntar usuario a req.user
 const authMiddleware = async (req, res, next) => {
   try {
@@ -16,14 +19,13 @@ const authMiddleware = async (req, res, next) => {
 
     let decoded;
     try {
-      decoded = jwt.verify(token, process.env.JWT_SECRET);
+      decoded = jwt.verify(token, JWT_SECRET);
     } catch (err) {
-      return res
-        .status(401)
-        .json({ message: "Token inválido o expirado" });
+      console.error("JWT inválido o expirado:", err.message);
+      return res.status(401).json({ message: "Token inválido o expirado" });
     }
 
-    // Opcional pero recomendado: verificar que el usuario exista en BD
+    // Verificar que el usuario exista en BD
     const [rows] = await pool.query(
       "SELECT id, nombre, email, rol FROM usuarios WHERE id = ?",
       [decoded.id]
@@ -33,29 +35,25 @@ const authMiddleware = async (req, res, next) => {
       return res.status(401).json({ message: "Usuario no encontrado" });
     }
 
-    // Guardamos el usuario en req.user para middlewares/rutas siguientes
+    // Lo dejamos accesible en el request
     req.user = rows[0];
-    req.usuario = rows[0]; 
+    req.usuario = rows[0]; // compatibilidad
 
     next();
   } catch (error) {
     console.error("Error en authMiddleware:", error);
-    return res
-      .status(500)
-      .json({ message: "Error interno del servidor en autenticación" });
+    res.status(500).json({ message: "Error de autenticación" });
   }
 };
 
-// Middleware para permitir solo admins
+// Solo admins
 const soloAdmin = (req, res, next) => {
   if (!req.user) {
     return res.status(401).json({ message: "No autenticado" });
   }
 
   if (req.user.rol !== "admin") {
-    return res
-      .status(403)
-      .json({ message: "Acceso restringido a administradores" });
+    return res.status(403).json({ message: "Acceso restringido a administradores" });
   }
 
   next();
