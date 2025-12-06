@@ -1,8 +1,8 @@
 /**
  * accessibility.js
  * Sistema de accesibilidad reutilizable con modo claro/oscuro y control de texto
- * Guarda preferencias en localStorage para persistencia entre sesiones y páginas
- *
+ * Guarda preferencias en localStorage para persistencia entre sesiones
+ * 
  * Uso: Incluir al final del <body> en cualquier página HTML
  * <script src="js/accessibility.js"></script>
  */
@@ -11,18 +11,18 @@ class AccessibilityManager {
   constructor() {
     // Configuración por defecto
     this.settings = {
-      theme: "light",
-      fontSize: "medium",
+      theme: 'light',
+      fontSize: 'medium'
     };
-
+    
     // Multiplicadores de tamaño de fuente
     this.fontSizes = {
       small: 0.875,
       medium: 1,
       large: 1.125,
-      xlarge: 1.25,
+      xlarge: 1.25
     };
-
+    
     this.init();
   }
 
@@ -31,7 +31,6 @@ class AccessibilityManager {
    */
   init() {
     this.loadSettings();
-    // Aplica las preferencias aunque todavía no exista el widget
     this.applyTheme(this.settings.theme);
     this.applyFontSize(this.settings.fontSize);
   }
@@ -41,20 +40,12 @@ class AccessibilityManager {
    */
   loadSettings() {
     try {
-      const saved = localStorage.getItem("accessibilitySettings");
+      const saved = localStorage.getItem('accessibilitySettings');
       if (saved) {
-        const parsed = JSON.parse(saved);
-        // merge simple por si en el futuro agregas más campos
-        this.settings = {
-          ...this.settings,
-          ...parsed,
-        };
+        this.settings = JSON.parse(saved);
       }
     } catch (error) {
-      console.warn(
-        "Error cargando configuración de accesibilidad:",
-        error
-      );
+      console.warn('Error cargando configuración de accesibilidad:', error);
     }
   }
 
@@ -63,15 +54,9 @@ class AccessibilityManager {
    */
   saveSettings() {
     try {
-      localStorage.setItem(
-        "accessibilitySettings",
-        JSON.stringify(this.settings)
-      );
+      localStorage.setItem('accessibilitySettings', JSON.stringify(this.settings));
     } catch (error) {
-      console.warn(
-        "Error guardando configuración de accesibilidad:",
-        error
-      );
+      console.warn('Error guardando configuración de accesibilidad:', error);
     }
   }
 
@@ -79,8 +64,7 @@ class AccessibilityManager {
    * Alternar entre tema claro y oscuro
    */
   toggleTheme() {
-    this.settings.theme =
-      this.settings.theme === "light" ? "dark" : "light";
+    this.settings.theme = this.settings.theme === 'light' ? 'dark' : 'light';
     this.applyTheme(this.settings.theme);
     this.saveSettings();
   }
@@ -90,13 +74,13 @@ class AccessibilityManager {
    * @param {string} theme - 'light' o 'dark'
    */
   applyTheme(theme) {
-    document.documentElement.setAttribute("data-theme", theme);
+    document.documentElement.setAttribute('data-theme', theme);
     this.settings.theme = theme;
-
-    // Actualizar ícono del botón de tema si el widget ya existe
-    const themeIcon = document.getElementById("theme-icon");
+    
+    // Actualizar ícono del botón de tema
+    const themeIcon = document.getElementById('theme-icon');
     if (themeIcon) {
-      themeIcon.textContent = theme === "light" ? "🌙" : "☀️";
+      themeIcon.textContent = theme === 'light' ? '🌙' : '☀️';
     }
   }
 
@@ -107,20 +91,18 @@ class AccessibilityManager {
   changeFontSize(action) {
     const sizes = Object.keys(this.fontSizes);
     const currentIndex = sizes.indexOf(this.settings.fontSize);
-
-    let newIndex = currentIndex;
-    if (action === "increase" && currentIndex < sizes.length - 1) {
+    
+    let newIndex;
+    if (action === 'increase' && currentIndex < sizes.length - 1) {
       newIndex = currentIndex + 1;
-    } else if (action === "decrease" && currentIndex > 0) {
+    } else if (action === 'decrease' && currentIndex > 0) {
       newIndex = currentIndex - 1;
-    } else if (action === "reset") {
-      newIndex = sizes.indexOf("medium");
-    }
-
-    if (newIndex === currentIndex || newIndex === -1) {
+    } else if (action === 'reset') {
+      newIndex = sizes.indexOf('medium');
+    } else {
       return; // No hay cambio
     }
-
+    
     this.settings.fontSize = sizes[newIndex];
     this.applyFontSize(this.settings.fontSize);
     this.saveSettings();
@@ -131,17 +113,12 @@ class AccessibilityManager {
    * @param {string} size - 'small', 'medium', 'large', o 'xlarge'
    */
   applyFontSize(size) {
-    const multiplier = this.fontSizes[size] || this.fontSizes.medium;
-    document.documentElement.style.setProperty(
-      "--font-size-multiplier",
-      multiplier
-    );
+    const multiplier = this.fontSizes[size];
+    document.documentElement.style.setProperty('--font-size-multiplier', multiplier);
     this.settings.fontSize = size;
-
-    // Actualizar indicador visual si existe
-    const fontSizeIndicator = document.getElementById(
-      "font-size-indicator"
-    );
+    
+    // Actualizar indicador visual
+    const fontSizeIndicator = document.getElementById('font-size-indicator');
     if (fontSizeIndicator) {
       fontSizeIndicator.textContent = size.toUpperCase();
     }
@@ -151,10 +128,10 @@ class AccessibilityManager {
    * Crear el widget flotante de accesibilidad
    */
   createAccessibilityWidget() {
-    const widget = document.createElement("div");
-    widget.id = "accessibility-widget";
-    widget.className = "accessibility-widget";
-
+    const widget = document.createElement('div');
+    widget.id = 'accessibility-widget';
+    widget.className = 'accessibility-widget';
+    
     widget.innerHTML = `
       <button id="accessibility-toggle" class="widget-toggle" aria-label="Abrir menú de accesibilidad" aria-expanded="false">
         <span class="icon">◀</span>
@@ -185,14 +162,8 @@ class AccessibilityManager {
         </div>
       </div>
     `;
-
+    
     document.body.appendChild(widget);
-
-    // Una vez creado el widget, volvemos a aplicar tema y tamaño
-    // para que el icono y el indicador queden sincronizados con la preferencia
-    this.applyTheme(this.settings.theme);
-    this.applyFontSize(this.settings.fontSize);
-
     this.attachEventListeners();
   }
 
@@ -200,86 +171,75 @@ class AccessibilityManager {
    * Adjuntar eventos a los botones del widget
    */
   attachEventListeners() {
-    const toggle = document.getElementById("accessibility-toggle");
-    const panel = document.getElementById("accessibility-panel");
-    const closeBtn = document.getElementById("close-panel");
-    const themeToggle = document.getElementById("theme-toggle");
-    const fontIncrease = document.getElementById("font-increase");
-    const fontDecrease = document.getElementById("font-decrease");
-    const fontReset = document.getElementById("font-reset");
-    const widget = document.getElementById("accessibility-widget");
+    const toggle = document.getElementById('accessibility-toggle');
+    const panel = document.getElementById('accessibility-panel');
+    const closeBtn = document.getElementById('close-panel');
+    const themeToggle = document.getElementById('theme-toggle');
+    const fontIncrease = document.getElementById('font-increase');
+    const fontDecrease = document.getElementById('font-decrease');
+    const fontReset = document.getElementById('font-reset');
+    const widget = document.getElementById('accessibility-widget');
 
     // Toggle del panel
     if (toggle && panel && widget) {
-      toggle.addEventListener("click", (e) => {
+      toggle.addEventListener('click', (e) => {
         e.stopPropagation();
-        const isOpen = widget.classList.contains("open");
-
+        const isOpen = widget.classList.contains('open');
+        
         if (isOpen) {
-          widget.classList.remove("open");
-          toggle.setAttribute("aria-expanded", "false");
-          toggle.querySelector(".icon").textContent = "◀";
+          widget.classList.remove('open');
+          toggle.setAttribute('aria-expanded', 'false');
+          toggle.querySelector('.icon').textContent = '◀';
         } else {
-          widget.classList.add("open");
-          toggle.setAttribute("aria-expanded", "true");
-          toggle.querySelector(".icon").textContent = "▶";
+          widget.classList.add('open');
+          toggle.setAttribute('aria-expanded', 'true');
+          toggle.querySelector('.icon').textContent = '▶';
         }
       });
     }
 
     // Botón cerrar
     if (closeBtn && widget && toggle) {
-      closeBtn.addEventListener("click", () => {
-        widget.classList.remove("open");
-        toggle.setAttribute("aria-expanded", "false");
-        toggle.querySelector(".icon").textContent = "◀";
+      closeBtn.addEventListener('click', () => {
+        widget.classList.remove('open');
+        toggle.setAttribute('aria-expanded', 'false');
+        toggle.querySelector('.icon').textContent = '◀';
       });
     }
 
     // Botón de tema
     if (themeToggle) {
-      themeToggle.addEventListener("click", () => this.toggleTheme());
+      themeToggle.addEventListener('click', () => this.toggleTheme());
     }
 
     // Botones de tamaño de fuente
     if (fontIncrease) {
-      fontIncrease.addEventListener("click", () =>
-        this.changeFontSize("increase")
-      );
+      fontIncrease.addEventListener('click', () => this.changeFontSize('increase'));
     }
-
+    
     if (fontDecrease) {
-      fontDecrease.addEventListener("click", () =>
-        this.changeFontSize("decrease")
-      );
+      fontDecrease.addEventListener('click', () => this.changeFontSize('decrease'));
     }
-
+    
     if (fontReset) {
-      fontReset.addEventListener("click", () =>
-        this.changeFontSize("reset")
-      );
+      fontReset.addEventListener('click', () => this.changeFontSize('reset'));
     }
 
     // Cerrar panel al hacer clic fuera
-    document.addEventListener("click", (e) => {
-      if (widget && toggle && !e.target.closest("#accessibility-widget")) {
-        widget.classList.remove("open");
-        toggle.setAttribute("aria-expanded", "false");
-        toggle.querySelector(".icon").textContent = "◀";
+    document.addEventListener('click', (e) => {
+      if (widget && toggle && !e.target.closest('#accessibility-widget')) {
+        widget.classList.remove('open');
+        toggle.setAttribute('aria-expanded', 'false');
+        toggle.querySelector('.icon').textContent = '◀';
       }
     });
 
     // Cerrar panel con tecla Escape
-    document.addEventListener("keydown", (e) => {
-      if (
-        e.key === "Escape" &&
-        widget &&
-        widget.classList.contains("open") &&
-        toggle
-      ) {
-        widget.classList.remove("open");
-        toggle.setAttribute("aria-expanded", "false");
-        toggle.querySelector(".icon").textContent = "◀";
+    document.addEventListener('keydown', (e) => {
+      if (e.key === 'Escape' && widget && widget.classList.contains('open') && toggle) {
+        widget.classList.remove('open');
+        toggle.setAttribute('aria-expanded', 'false');
+        toggle.querySelector('.icon').textContent = '◀';
         toggle.focus();
       }
     });
@@ -290,12 +250,12 @@ class AccessibilityManager {
 let accessibilityManager;
 
 // Inicializar cuando el DOM esté completamente cargado
-document.addEventListener("DOMContentLoaded", () => {
+document.addEventListener('DOMContentLoaded', () => {
   accessibilityManager = new AccessibilityManager();
   accessibilityManager.createAccessibilityWidget();
 });
 
 // Exportar para uso en módulos ES6 (opcional)
-if (typeof module !== "undefined" && module.exports) {
+if (typeof module !== 'undefined' && module.exports) {
   module.exports = AccessibilityManager;
 }
