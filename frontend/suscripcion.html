@@ -1,71 +1,74 @@
 <!DOCTYPE html>
-<html lang="es">
+<html lang="es" data-theme="light">
 <head>
     <meta charset="UTF-8">
-    <title>Suscripción</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Retro Music - Suscripción</title>
+
+    <!-- Estilos -->
     <link rel="stylesheet" href="css/accessibility.css">
     <link rel="stylesheet" href="css/estilos.css">
 </head>
 <body>
-
-   <header class="top-header">
-  <div class="logo-derecha">
-    <img src="img/logo.png" alt="Logo Retro Music" class="logo-img">
-    <h2 class="logo-text">
-      <span class="retro">RETRO</span>
-      <span class="music">MUSIC</span>
-    </h2>
-  </div>
-
-  <nav class="menu-derecha">
-    <ul>
-      <li><a href="index.html">Inicio</a></li>
-      <li><a href="productos.html">Tienda</a></li>
-      <li><a href="marcas.html">Marcas</a></li>
-      <li><a href="nosotros.html">Nosotros</a></li>
-      <li><a href="contacto.html">Contacto</a></li>
-      <li id="menu-auth"></li>
-    </ul>
-  </nav>
-</header>
-
-
-    <div class="container">
-        <form id="formSuscripcion" class="form">
-            <h2>Suscríbete para recibir ofertas</h2>
-
-            <label for="correoSus">Correo electrónico:</label>
-            <input type="email" id="correoSus" required>
-
-            <button type="submit">Suscribirme</button>
-
-            <p id="resultadoSus"></p>
-        </form>
+  <header class="top-header">
+    <div class="logo-derecha">
+      <img src="img/logo.png" alt="Logo Retro Music" class="logo-img">
+      <h2 class="logo-text">
+        <span class="retro">RETRO</span>
+        <span class="music">MUSIC</span>
+      </h2>
     </div>
 
-    <footer class="footer">
+    <nav class="menu-derecha">
+      <ul>
+        <li><a href="index.html">Inicio</a></li>
+        <li><a href="productos.html">Tienda</a></li>
+        <li><a href="marcas.html">Marcas</a></li>
+        <li><a href="nosotros.html">Nosotros</a></li>
+        <li><a href="contacto.html">Contacto</a></li>
+        <li id="menu-auth"></li>
+      </ul>
+    </nav>
+  </header>
+
+  <main class="suscripcion-main">
+    <div class="container">
+      <form id="formSuscripcion" class="form">
+        <h2>Suscríbete para recibir ofertas</h2>
+
+        <label for="correoSus">Correo electrónico:</label>
+        <input type="email" id="correoSus" required>
+
+        <button type="submit">Suscribirme</button>
+
+        <p id="resultadoSus"></p>
+      </form>
+    </div>
+  </main>
+
+  <footer class="footer">
     <div class="footer-container">
+      <div class="footer-brand">
+        <h2><span class="retro">Retro</span> <span class="music">Music</span></h2>
+        <p>Donde la música y el artista se vuelven uno solo, los mejores instrumentos que verás en tu vida.</p>
+      </div>
 
-        <div class="footer-brand">
-            <h2><span class="retro">Retro</span> <span class="music">Music</span></h2>
-            <p>Donde la música y el artista se vuelven uno solo, los mejores instrumentos que verás en tu vida.</p>
-        </div>
-
-        <div class="footer-links">
-            <a href="#">Términos y Condiciones</a>
-            <a href="#">Política de Privacidad</a>
-        </div>
-
+      <div class="footer-links">
+        <a href="#">Términos y Condiciones</a>
+        <a href="#">Política de Privacidad</a>
+      </div>
     </div>
 
     <div class="footer-bottom">
-        © 2025 Por RetroMusic - Proyecto académico.
+      © 2025 Por RetroMusic - Proyecto académico.
     </div>
-</footer>
+  </footer>
 
-        <script src="js/accessibility.js"></script>
-        <script src="js/session.js"></script>
-        <script src="js/suscripcion.js"></script>
+  <!-- Scripts globales -->
+  <script src="js/accessibility.js"></script>
+  <script src="js/session.js"></script>
 
+  <!-- Script específico de esta página -->
+  <script src="js/suscripcion.js"></script>
 </body>
 </html>

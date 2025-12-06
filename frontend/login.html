@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<html lang="es">
+<html lang="es" data-theme="light">
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
@@ -69,13 +69,16 @@
             <label for="loginPassword">Contraseña</label>
             <input type="password" id="loginPassword" name="password" required>
           </div>
-            <div id="captchaBox" class="captcha-row">
-          <label for="captchaInput">Verificación:</label>
-          <div class="captcha-op">
-            <span id="captchaText"></span>
-            <input type="number" id="captchaInput" required placeholder="Resultado">
+
+          <!-- CAPTCHA simple -->
+          <div id="captchaBox" class="captcha-row">
+            <label for="captchaInput">Verificación:</label>
+            <div class="captcha-op">
+              <span id="captchaText"></span>
+              <input type="number" id="captchaInput" required placeholder="Resultado">
+            </div>
           </div>
-        </div>
+
           <button type="submit" class="auth-button" id="btnLogin">
             Iniciar sesión
           </button>
@@ -96,8 +99,8 @@
   </footer>
 
   <!-- Accesibilidad -->
-  <script src="js/accessibility.js" defer></script>
+  <script src="js/accessibility.js"></script>
   <!-- Lógica de login/registro -->
-  <script src="js/auth.js" defer></script>
+  <script src="js/auth.js"></script>
 </body>
 </html>

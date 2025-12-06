@@ -1,10 +1,11 @@
 <!DOCTYPE html>
-<html lang="es">
+<html lang="es" data-theme="light">
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>Retro Music - Detalle de producto</title>
 
+  <!-- Estilos (mismo orden que en index) -->
   <link rel="stylesheet" href="css/accessibility.css" />
   <link rel="stylesheet" href="css/estilos.css" />
 </head>
@@ -18,14 +19,14 @@
       </h2>
     </div>
 
-    <nav class="nav-menu">
+    <nav class="menu-derecha">
       <ul>
         <li><a href="index.html">Inicio</a></li>
-        <li><a href="productos.html">Productos</a></li>
+        <li><a href="productos.html">Tienda</a></li>
         <li><a href="marcas.html">Marcas</a></li>
         <li><a href="nosotros.html">Nosotros</a></li>
         <li><a href="contacto.html">Contacto</a></li>
-        <li id="menu-auth"><a href="login.html">Iniciar sesión</a></li>
+        <li id="menu-auth"></li>
         <li>
           <a href="carrito.html" class="cart-icon-link">
             🛒 <span id="contadorCarrito">0</span>
@@ -87,9 +88,11 @@
     </div>
   </footer>
 
-  <!-- Scripts -->
+  <!-- Scripts globales -->
   <script src="js/accessibility.js"></script>
   <script src="js/session.js"></script>
+
+  <!-- Scripts específicos de esta página -->
   <script src="js/cart.js"></script>      <!-- funciones de carrito -->
   <script src="js/producto.js"></script>  <!-- script de esta pantalla -->
 </body>
