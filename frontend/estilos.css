@@ -1184,3 +1184,97 @@ body {
         height: 250px;
     }
 }
+
+
+/*Romeo agregado header*/
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+}
+
+.top-header {
+    width: 100%;
+    padding: 15px 30px;
+    background: var(--bg-primary);
+    display: flex;
+    justify-content: space-between; 
+    align-items: center;
+    position: relative;
+    box-shadow: 0 2px 5px var(--shadow);
+}
+
+.logo-derecha {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+}
+
+.logo-img {
+    width: 90px;
+    height: 80px;
+}
+
+.logo-text {
+    font-size: 26px;
+    font-weight: bold;
+}
+
+.retro {
+    color: #8e44ff; 
+}
+
+.music {
+    color: var(--text-primary);
+}
+
+.menu-derecha ul {
+    display: flex;
+    list-style: none;
+    gap: 25px;
+}
+
+.menu-derecha ul li a {
+    text-decoration: none;
+    color: var(--text-primary);
+    font-weight: bold;
+    transition: 0.3s;
+}
+
+.menu-derecha ul li a:hover {
+    color: #7f00ff;
+}
+
+/*footer iconos de link*/
+
+.redes-sociales {
+    display: flex;
+    gap: 20px;
+    justify-content: center;
+    margin: 20px 0;
+}
+
+.red-social {
+    display: flex;
+    text-decoration: none;
+    background-color: #000000;
+    color: #ebebeb;
+    padding: 15px;
+    /*border: 1px solid #cccccc;*/
+    border-radius: 50px;
+    transition: all 0.3s ease;
+    align-items: center;
+    justify-content: center;
+    width: 10px;
+    height: 10px;
+}
+
+.red-social i {
+    font-size: 1.52em;
+}
+
+.red-social:hover {
+    background-color: #cccccc;
+    color: #111010;
+}

@@ -500,3 +500,35 @@ body {
 /* ==========================
    Fin vista de carrito de compras
    ========================== */
+
+
+.redes-sociales {
+    display: flex;
+    gap: 20px;
+    justify-content: center;
+    margin: 20px 0;
+}
+
+.red-social {
+    display: flex;
+    text-decoration: none;
+    background-color: #000000;
+    color: #ebebeb;
+    padding: 15px;
+    /*border: 1px solid #cccccc;*/
+    border-radius: 50px;
+    transition: all 0.3s ease;
+    align-items: center;
+    justify-content: center;
+    width: 10px;
+    height: 10px;
+}
+
+.red-social i {
+    font-size: 1.52em;
+}
+
+.red-social:hover {
+    background-color: #cccccc;
+    color: #111010;
+}
