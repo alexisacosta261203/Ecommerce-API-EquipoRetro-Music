@@ -19,6 +19,12 @@ document.addEventListener("DOMContentLoaded", () => {
 
       const email = document.getElementById("forgotEmail").value.trim();
       const btn = document.getElementById("btnForgot");
+
+      if (!email) {
+        setMensaje("forgotMensaje", "Ingresa tu correo.", "error");
+        return;
+      }
+
       btn.disabled = true;
       setMensaje("forgotMensaje", "Procesando solicitud...", "ok");
 
@@ -29,33 +35,22 @@ document.addEventListener("DOMContentLoaded", () => {
           body: JSON.stringify({ email }),
         });
 
-        const data = await res.json();
+        const data = await res.json().catch(() => ({}));
 
-        // En este proyecto, aunque el correo no exista no queremos revelar nada
         if (!res.ok) {
           setMensaje(
             "forgotMensaje",
             data.error || "No se pudo procesar la solicitud.",
             "error"
           );
-        } else {
-          let msg =
-            data.message ||
-            "Si el correo está registrado, se ha enviado un código de recuperación.";
-
-          // Para fines académicos, mostramos el código devuelto por el back (simulación de correo)
-          if (data.codigo) {
-            msg += `\n(Código de demostración: ${data.codigo})`;
-          }
-
-          setMensaje("forgotMensaje", msg, "ok");
-
-          // Rellenamos el email también en el form de reset para que no lo vuelva a escribir
-          const resetEmail = document.getElementById("resetEmail");
-          if (resetEmail && !resetEmail.value) {
-            resetEmail.value = email;
-          }
+          return;
         }
+
+        const msg =
+          data.message ||
+          "Si el correo existe, se ha generado un código de recuperación.";
+        setMensaje("forgotMensaje", msg, "ok");
+        formForgot.reset();
       } catch (err) {
         console.error(err);
         setMensaje(
@@ -81,6 +76,16 @@ document.addEventListener("DOMContentLoaded", () => {
         .value.trim();
 
       const btn = document.getElementById("btnReset");
+
+      if (!email || !codigo || !nuevaPassword) {
+        setMensaje(
+          "resetMensaje",
+          "Correo, código y nueva contraseña son obligatorios.",
+          "error"
+        );
+        return;
+      }
+
       btn.disabled = true;
       setMensaje("resetMensaje", "Actualizando contraseña...", "ok");
 
@@ -91,7 +96,7 @@ document.addEventListener("DOMContentLoaded", () => {
           body: JSON.stringify({ email, codigo, nuevaPassword }),
         });
 
-        const data = await res.json();
+        const data = await res.json().catch(() => ({}));
 
         if (!res.ok) {
           setMensaje(
@@ -100,18 +105,17 @@ document.addEventListener("DOMContentLoaded", () => {
               "No se pudo restablecer la contraseña. Verifica el código.",
             "error"
           );
-        } else {
-          setMensaje(
-            "resetMensaje",
-            "Contraseña actualizada correctamente. Ya puedes iniciar sesión.",
-            "ok"
-          );
-
-          // Opcional: redirigir al login después de unos segundos
-          setTimeout(() => {
-            window.location.href = "login.html";
-          }, 1500);
+          return;
         }
+
+        const msg =
+          data.message || "Contraseña actualizada correctamente. Ya puedes iniciar sesión.";
+        setMensaje("resetMensaje", msg, "ok");
+        formReset.reset();
+
+        setTimeout(() => {
+          window.location.href = "login.html";
+        }, 2000);
       } catch (err) {
         console.error(err);
         setMensaje(
