@@ -1,6 +1,5 @@
 
 require("dotenv").config();
-require('dotenv').config();
 const express = require('express');
 const cors = require('cors');
 const allRoutes = require('./routes/categoriasRoutes');
@@ -13,21 +12,12 @@ const ordenRoutes = require('./routes/ordenRoutes');
 
 
 
-
-const express = require("express");
-const cors = require("cors");
-const path = require("path");
-
-const pool = require("./db/conexion");
-
 // Rutas
 const categoriasRoutes = require("./routes/categoriasRoutes");
-const contactoRoutes = require("./routes/contactoRoutes");
-const suscripcionRoutes = require("./routes/suscripcionRoutes");
 const productosRoutes = require("./routes/productosRoutes"); // 👈 nueva ruta
 
 const app = express();
-const PORT = process.env.PORT || 3000;
+const PORT = process.env.PORT || 4000;
 
 // ----- MIDDLEWARES -----
 app.use(cors({
