@@ -3,92 +3,110 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Retro Music - Iniciar sesión / Registro</title>
+  <title>Retro Music - Recuperar contraseña</title>
 
-  <!-- Accesibilidad y estilos específicos de auth -->
   <link rel="stylesheet" href="css/accessibility.css">
   <link rel="stylesheet" href="css/auth.css">
 </head>
 <body>
   <header class="auth-header">
     <div>
-      <strong>Retro Music</strong> · Cuenta
+      <strong>Retro Music</strong> · Recuperar contraseña
     </div>
     <nav>
-      <a href="index.html">← Volver a inicio</a>
+      <a href="login.html">← Volver a iniciar sesión</a>
     </nav>
   </header>
 
   <main class="auth-main">
     <div class="auth-container">
-      <!-- Registro -->
+      <!-- Paso 1: solicitar código -->
       <section class="auth-card">
-        <h2>Crear cuenta</h2>
-        <p>Regístrate para guardar tu información y usar el carrito.</p>
+        <h2>Solicitar código de recuperación</h2>
+        <p>
+          Ingresa el correo con el que te registraste.
+          Generaremos un código de recuperación.
+        </p>
 
-        <form id="formRegistro">
+        <form id="formForgot">
           <div class="auth-form-group">
-            <label for="regNombre">Nombre completo</label>
-            <input type="text" id="regNombre" name="nombre" required>
+            <label for="forgotEmail">Correo electrónico</label>
+            <input
+              type="email"
+              id="forgotEmail"
+              name="email"
+              required
+              placeholder="ejemplo@correo.com"
+            >
           </div>
 
-          <div class="auth-form-group">
-            <label for="regEmail">Correo electrónico</label>
-            <input type="email" id="regEmail" name="email" required>
-          </div>
-
-          <div class="auth-form-group">
-            <label for="regPassword">Contraseña</label>
-            <input type="password" id="regPassword" name="password" required minlength="6">
-          </div>
-
-          <button type="submit" class="auth-button" id="btnRegistro">
-            Registrarme
+          <button type="submit" class="auth-button" id="btnForgot">
+            Enviar código
           </button>
 
-          <div id="registroMensaje" class="auth-message"></div>
+          <div id="forgotMensaje" class="auth-message"></div>
         </form>
 
         <p class="auth-footer-note">
-          Usaremos tu correo solo para crear tu cuenta y gestionar tus compras.
+          Por seguridad, siempre responderemos de forma genérica
+          aunque el correo no exista en el sistema.
         </p>
       </section>
 
-      <!-- Login -->
+      <!-- Paso 2: restablecer contraseña -->
       <section class="auth-card">
-        <h2>Iniciar sesión</h2>
-        <p>Accede con tu correo y contraseña.</p>
+        <h2>Restablecer contraseña</h2>
+        <p>
+          Ingresa tu correo, el código que recibiste
+          y la nueva contraseña.
+        </p>
 
-        <form id="formLogin">
+        <form id="formReset">
           <div class="auth-form-group">
-            <label for="loginEmail">Correo electrónico</label>
-            <input type="email" id="loginEmail" name="email" required>
+            <label for="resetEmail">Correo electrónico</label>
+            <input
+              type="email"
+              id="resetEmail"
+              name="email"
+              required
+              placeholder="ejemplo@correo.com"
+            >
           </div>
 
           <div class="auth-form-group">
-            <label for="loginPassword">Contraseña</label>
-            <input type="password" id="loginPassword" name="password" required>
+            <label for="resetCode">Código de recuperación</label>
+            <input
+              type="text"
+              id="resetCode"
+              name="codigo"
+              required
+              maxlength="6"
+              placeholder="Código de 6 dígitos"
+            >
           </div>
 
-          <!-- CAPTCHA simple -->
-          <div id="captchaBox" class="captcha-row">
-            <label for="captchaInput">Verificación:</label>
-            <div class="captcha-op">
-              <span id="captchaText"></span>
-              <input type="number" id="captchaInput" required placeholder="Resultado">
-            </div>
+          <div class="auth-form-group">
+            <label for="resetPassword">Nueva contraseña</label>
+            <input
+              type="password"
+              id="resetPassword"
+              name="nuevaPassword"
+              required
+              minlength="6"
+              placeholder="Nueva contraseña"
+            >
           </div>
 
-          <button type="submit" class="auth-button" id="btnLogin">
-            Iniciar sesión
+          <button type="submit" class="auth-button" id="btnReset">
+            Cambiar contraseña
           </button>
 
-          <div id="loginMensaje" class="auth-message"></div>
+          <div id="resetMensaje" class="auth-message"></div>
         </form>
 
         <p class="auth-footer-note">
-          Si olvidaste tu contraseña, más adelante aquí podemos conectar
-          la opción de recuperación por correo.
+          El código expira según lo que está configurado en la BD
+          (en tu caso, 10 minutos con <code>reset_expires</code>).
         </p>
       </section>
     </div>
@@ -98,9 +116,7 @@
     Retro Music · Proyecto Sistemas Web · 2025
   </footer>
 
-  <!-- Accesibilidad -->
   <script src="js/accessibility.js"></script>
-  <!-- Lógica de login/registro -->
-  <script src="js/auth.js"></script>
+  <script src="js/recuperar.js"></script>
 </body>
 </html>

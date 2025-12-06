@@ -26,7 +26,7 @@
         <h2>Crear cuenta</h2>
         <p>Regístrate para guardar tu información y usar el carrito.</p>
 
-        <form id="formRegistro">
+        <form id="registerForm">
           <div class="auth-form-group">
             <label for="regNombre">Nombre completo</label>
             <input type="text" id="regNombre" name="nombre" required>
@@ -39,14 +39,31 @@
 
           <div class="auth-form-group">
             <label for="regPassword">Contraseña</label>
-            <input type="password" id="regPassword" name="password" required minlength="6">
+            <input
+              type="password"
+              id="regPassword"
+              name="password"
+              required
+              minlength="6"
+            >
+          </div>
+
+          <div class="auth-form-group">
+            <label for="regPassword2">Confirmar contraseña</label>
+            <input
+              type="password"
+              id="regPassword2"
+              name="confirmarPassword"
+              required
+              minlength="6"
+            >
           </div>
 
           <button type="submit" class="auth-button" id="btnRegistro">
             Registrarme
           </button>
 
-          <div id="registroMensaje" class="auth-message"></div>
+          <div id="registerMessage" class="auth-message"></div>
         </form>
 
         <p class="auth-footer-note">
@@ -59,7 +76,7 @@
         <h2>Iniciar sesión</h2>
         <p>Accede con tu correo y contraseña.</p>
 
-        <form id="formLogin">
+        <form id="loginForm">
           <div class="auth-form-group">
             <label for="loginEmail">Correo electrónico</label>
             <input type="email" id="loginEmail" name="email" required>
@@ -70,12 +87,17 @@
             <input type="password" id="loginPassword" name="password" required>
           </div>
 
-          <!-- CAPTCHA simple -->
+          <!-- CAPTCHA simple (solo visual, opcional) -->
           <div id="captchaBox" class="captcha-row">
             <label for="captchaInput">Verificación:</label>
             <div class="captcha-op">
               <span id="captchaText"></span>
-              <input type="number" id="captchaInput" required placeholder="Resultado">
+              <input
+                type="number"
+                id="captchaInput"
+                required
+                placeholder="Resultado"
+              >
             </div>
           </div>
 
@@ -83,7 +105,7 @@
             Iniciar sesión
           </button>
 
-          <div id="loginMensaje" class="auth-message"></div>
+          <div id="loginMessage" class="auth-message"></div>
         </form>
 
         <p class="auth-footer-note">
