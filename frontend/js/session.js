@@ -53,19 +53,20 @@ function renderizarMenuAuth() {
     return;
   }
 
-  const nombre = (usuario.nombre || "Usuario").split(" ")[0];
+ const nombre = (usuario.nombre || "Usuario").split(" ")[0];
 
-  // Si es admin, mostramos también el link al panel
-  let adminLink = "";
-  if (usuario.rol === "admin") {
-    adminLink = '<a href="admin.html" class="link-admin">Panel admin</a>';
-  }
+let adminLink = "";
+if (usuario.rol === "admin") {
+  adminLink = '<a href="admin.html" class="link-admin">Panel admin</a>';
+}
 
-  li.innerHTML = `
-    <span class="menu-usuario">Hola, ${nombre}</span>
-    ${adminLink}
-    <button id="btnLogout" class="btn-logout-menu">Salir</button>
-  `;
+li.innerHTML = `
+  <span class="menu-usuario">Hola, ${nombre}</span>
+  <a href="mis-ordenes.html" class="link-mis-ordenes">Mis órdenes</a>
+  ${adminLink}
+  <button id="btnLogout" class="btn-logout-menu">Salir</button>
+`;
+
 
   const btnLogout = document.getElementById("btnLogout");
   if (btnLogout) {

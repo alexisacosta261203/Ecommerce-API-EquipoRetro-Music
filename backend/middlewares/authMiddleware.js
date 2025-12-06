@@ -35,6 +35,7 @@ const authMiddleware = async (req, res, next) => {
 
     // Guardamos el usuario en req.user para middlewares/rutas siguientes
     req.user = rows[0];
+    req.usuario = rows[0]; 
 
     next();
   } catch (error) {

@@ -517,44 +517,46 @@ if (typeof conectarBotonesCarrito === 'function') {
 // Función para crear el HTML de una tarjeta de producto individual
 function crearTarjetaProducto(producto) {
     // Manejo robusto de URLs de imágenes con múltiples formatos
-    
-    let imagenUrl = '';
-    
-    // Verificar diferentes formatos de URLs de imágenes
+    let imagenUrl = "";
+
     if (producto.imagen) {
-        // Caso 1: Si la imagen ya es una URL completa (http:// o https://)
-        if (producto.imagen.startsWith('http')) {
+        if (producto.imagen.startsWith("http")) {
+            // URL completa
             imagenUrl = producto.imagen;
-        } 
-        // Caso 2: Si la imagen empieza con / (ruta absoluta del servidor)
-        else if (producto.imagen.startsWith('/')) {
+        } else if (producto.imagen.startsWith("/")) {
+            // Ruta absoluta del backend
             imagenUrl = `http://localhost:4000${producto.imagen}`;
-        }
-        // Caso 3: Si es solo un nombre de archivo (sin ruta)
-        else {
+        } else if (producto.imagen.includes("uploads/")) {
+            // Ruta relativa que ya incluye uploads
+            imagenUrl = `http://localhost:4000/${producto.imagen}`;
+        } else {
+            // Nombre de archivo en la carpeta de uploads
             imagenUrl = `http://localhost:4000/uploads/productos/${producto.imagen}`;
         }
     } else {
-        // Caso 4: No hay imagen - usar placeholder seguro
-        imagenUrl = 'https://via.placeholder.com/300x200/4B5563/FFFFFF?text=Sin+Imagen';
+        // Sin imagen -> placeholder
+        imagenUrl =
+            "https://via.placeholder.com/300x200/4B5563/FFFFFF?text=Sin+Imagen";
     }
-    
-    // Formatear el precio como moneda mexicana
-    const precioFormateado = new Intl.NumberFormat('es-MX', {
-        style: 'currency',
-        currency: 'MXN'
+
+    // Formatear precio en MXN
+    const precioFormateado = new Intl.NumberFormat("es-MX", {
+        style: "currency",
+        currency: "MXN",
     }).format(producto.precio);
-    
-    // Buscar el nombre de la categoría usando el ID
-    const categoriaNombre = categorias.find(c => c.id == producto.categoria_id)?.nombre || 'Categoría';
-    // Buscar el nombre de la marca usando el ID
-    const marcaNombre = marcas.find(m => m.id == producto.marca_id)?.nombre || 'Marca';
-    
-    // Devolver el HTML completo de la tarjeta del producto
+
+    // Nombre de categoría y marca
+    const categoriaNombre =
+        categorias.find((c) => c.id == producto.categoria_id)?.nombre ||
+        "Categoría";
+    const marcaNombre =
+        marcas.find((m) => m.id == producto.marca_id)?.nombre || "Marca";
+
+    // HTML de la tarjeta
     return `
         <div class="product-card" data-producto-id="${producto.id}">
             <div class="product-image-container">
-                <img src="${imagenUrl}" alt="${producto.nombre}" class="product-image" 
+                <img src="${imagenUrl}" alt="${producto.nombre}" class="product-image"
                      onerror="this.src='https://via.placeholder.com/300x200/4B5563/FFFFFF?text=Error+Imagen'">
                 <span class="product-badge">Nuevo</span>
             </div>
@@ -568,34 +570,28 @@ function crearTarjetaProducto(producto) {
                 </div>
                 
                 <p class="product-description text-truncate-2">
-                    ${producto.descripcion || 'Instrumento musical de alta calidad.'}
+                    ${producto.descripcion || "Instrumento musical de alta calidad."}
                 </p>
                 
                 <div class="product-category">
                     <span>Categoría: ${categoriaNombre}</span>
                 </div>
                 
-<<<<<<< HEAD
                 <div class="product-actions">
-                    <button class="view-details-btn" onclick="event.stopPropagation(); abrirModalProductoDesdeTarjeta(${producto.id})">
+                    <button class="view-details-btn"
+                        onclick="event.preventDefault(); event.stopPropagation(); abrirModalProductoDesdeTarjeta(${producto.id})">
                         <i class="fas fa-eye"></i> Ver detalles
                     </button>
-                    <button class="add-to-cart-button" onclick="event.stopPropagation(); agregarAlCarritoDesdeLista(${producto.id})">
+                    <button class="add-to-cart-button" data-producto-id="${producto.id}">
                         <i class="fas fa-shopping-cart cart-button-icon"></i>
                         <span>Agregar al carrito</span>
                     </button>
                 </div>
-
-               <button class="add-to-cart-button" data-producto-id="${producto.id}">
-                <i class="fas fa-shopping-cart cart-button-icon"></i>
-                <span>Agregar al carrito</span>
-</button>
-
-
             </div>
         </div>
     `;
 }
+
 
 // Función para configurar clicks en las tarjetas de producto
 function configurarClickEnTarjetas() {
@@ -716,46 +712,60 @@ function formatearDescripcionModal(descripcion) {
 
 // Configurar eventos específicos del modal de producto
 function configurarEventosModalProducto(producto) {
-    const decrementBtn = document.querySelector('#decrementBtn');
-    const incrementBtn = document.querySelector('#incrementBtn');
-    const quantityInput = document.querySelector('#quantityInput');
-    const addToCartBtn = document.querySelector('#modalAddToCartBtn');
-    
+    const decrementBtn = document.querySelector("#decrementBtn");
+    const incrementBtn = document.querySelector("#incrementBtn");
+    const quantityInput = document.querySelector("#quantityInput");
+    const addToCartBtn = document.querySelector("#modalAddToCartBtn");
+
     // Controles de cantidad
-    if (decrementBtn) {
-        decrementBtn.addEventListener('click', () => {
+    if (decrementBtn && quantityInput) {
+        decrementBtn.addEventListener("click", () => {
             let value = parseInt(quantityInput.value) || 1;
             if (value > 1) {
                 quantityInput.value = value - 1;
             }
         });
     }
-    
-    if (incrementBtn) {
-        incrementBtn.addEventListener('click', () => {
+
+    if (incrementBtn && quantityInput) {
+        incrementBtn.addEventListener("click", () => {
             let value = parseInt(quantityInput.value) || 1;
             if (value < 99) {
                 quantityInput.value = value + 1;
             }
         });
     }
-    
+
     if (quantityInput) {
-        quantityInput.addEventListener('change', () => {
+        quantityInput.addEventListener("change", () => {
             let value = parseInt(quantityInput.value) || 1;
             if (value < 1) quantityInput.value = 1;
             if (value > 99) quantityInput.value = 99;
         });
     }
-    
-    // Agregar al carrito desde modal
+
+    // Agregar al carrito desde modal usando EL carrito unificado (cart.js)
     if (addToCartBtn) {
-        addToCartBtn.addEventListener('click', () => {
-            const cantidad = parseInt(quantityInput.value) || 1;
-            agregarAlCarritoDesdeModal(producto, cantidad);
+        addToCartBtn.addEventListener("click", () => {
+            const cantidad = parseInt(quantityInput?.value) || 1;
+            for (let i = 0; i < cantidad; i++) {
+                // Esta función viene de cart.js
+                agregarAlCarrito(producto.id);
+            }
+
+            // Notificación (opcional)
+            mostrarNotificacion(
+                `✅ ${producto.nombre} (${cantidad}) agregado al carrito`
+            );
+
+            // Cerrar modal después de agregar (igual que antes)
+            setTimeout(() => {
+                cerrarModal();
+            }, 1000);
         });
     }
 }
+
 
 // Cerrar modal
 function cerrarModal() {
@@ -765,41 +775,7 @@ function cerrarModal() {
 }
 
 // Agregar al carrito desde modal
-function agregarAlCarritoDesdeModal(producto, cantidad) {
-    // Obtener carrito actual
-    let carrito = JSON.parse(localStorage.getItem('carrito')) || [];
-    
-    // Buscar si el producto ya está en el carrito
-    const productoExistente = carrito.find(item => item.id === producto.id);
-    
-    if (productoExistente) {
-        productoExistente.cantidad += cantidad;
-    } else {
-        carrito.push({
-            id: producto.id,
-            nombre: producto.nombre,
-            precio: producto.precio,
-            imagen: producto.imagen,
-            sku: producto.sku,
-            color: producto.color,
-            cantidad: cantidad
-        });
-    }
-    
-    // Guardar en localStorage
-    localStorage.setItem('carrito', JSON.stringify(carrito));
-    
-    // Mostrar notificación
-    mostrarNotificacion(`✅ ${producto.nombre} (${cantidad}) agregado al carrito`);
-    
-    // Actualizar contador del carrito
-    actualizarContadorCarrito();
-    
-    // Cerrar modal después de agregar
-    setTimeout(() => {
-        cerrarModal();
-    }, 1000);
-}
+
 
 // Mostrar notificación
 function mostrarNotificacion(mensaje) {
@@ -839,71 +815,12 @@ function mostrarNotificacion(mensaje) {
 }
 
 // Actualizar contador del carrito
-function actualizarContadorCarrito() {
-    const carrito = JSON.parse(localStorage.getItem('carrito')) || [];
-    const totalItems = carrito.reduce((sum, item) => sum + item.cantidad, 0);
-    
-    // Actualizar en el header si existe
-    const cartButton = document.querySelector('.cart-button');
-    if (cartButton) {
-        const icon = cartButton.querySelector('.cart-icon');
-        if (totalItems > 0) {
-            // Agregar o actualizar badge
-            let badge = cartButton.querySelector('.cart-badge');
-            if (!badge) {
-                badge = document.createElement('span');
-                badge.className = 'cart-badge';
-                badge.style.cssText = 'position: absolute; top: -5px; right: -5px; background: #ef4444; color: white; border-radius: 50%; width: 20px; height: 20px; display: flex; align-items: center; justify-content: center; font-size: 12px;';
-                cartButton.style.position = 'relative';
-                cartButton.appendChild(badge);
-            }
-            badge.textContent = totalItems;
-        } else {
-            // Remover badge si no hay items
-            const badge = cartButton.querySelector('.cart-badge');
-            if (badge) badge.remove();
-        }
-    }
-}
+
 
 // ========== FUNCIONES DEL CARRITO ==========
 
 // Agregar al carrito desde lista
-function agregarAlCarritoDesdeLista(productoId) {
-    event.preventDefault();
-    event.stopPropagation();
-    
-    // Buscar el producto en la lista
-    const producto = todosLosProductos.find(p => p.id == productoId);
-    if (!producto) return;
-    
-    // Obtener carrito actual
-    let carrito = JSON.parse(localStorage.getItem('carrito')) || [];
-    
-    // Buscar si el producto ya está en el carrito
-    const productoExistente = carrito.find(item => item.id === producto.id);
-    
-    if (productoExistente) {
-        productoExistente.cantidad += 1;
-    } else {
-        carrito.push({
-            id: producto.id,
-            nombre: producto.nombre,
-            precio: producto.precio,
-                       imagen: producto.imagen,
-            cantidad: 1
-        });
-    }
-    
-    // Guardar en localStorage
-    localStorage.setItem('carrito', JSON.stringify(carrito));
-    
-    // Mostrar notificación
-    mostrarNotificacion(`✅ ${producto.nombre} agregado al carrito`);
-    
-    // Actualizar contador del carrito
-    actualizarContadorCarrito();
-}
+
 
 // ========== FUNCIONES DE SUBIDA DE IMÁGENES (EXISTENTES) ==========
 

@@ -69,7 +69,13 @@
             <label for="loginPassword">Contraseña</label>
             <input type="password" id="loginPassword" name="password" required>
           </div>
-
+            <div id="captchaBox" class="captcha-row">
+          <label for="captchaInput">Verificación:</label>
+          <div class="captcha-op">
+            <span id="captchaText"></span>
+            <input type="number" id="captchaInput" required placeholder="Resultado">
+          </div>
+        </div>
           <button type="submit" class="auth-button" id="btnLogin">
             Iniciar sesión
           </button>
