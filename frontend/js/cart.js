@@ -8,6 +8,7 @@ const CART_KEY_BASE = "retroMusicCart";
 // Obtener la clave específica según el usuario (para que cada usuario tenga su carrito)
 function obtenerCartKey() {
   try {
+    // Si tienes una función global que regresa el usuario actual, la usamos
     if (typeof obtenerUsuarioActual === "function") {
       const user = obtenerUsuarioActual();
       if (user && user.id) {
@@ -15,8 +16,10 @@ function obtenerCartKey() {
       }
     }
   } catch (e) {
-    console.warn("No se pudo obtener usuario actual para carrito:", e);
+    console.warn("Error obteniendo usuario actual:", e);
   }
+
+  // Si no hay usuario o falla, usamos una clave general
   return CART_KEY_BASE;
 }
 
@@ -24,11 +27,15 @@ function obtenerCartKey() {
 function obtenerCarrito() {
   const key = obtenerCartKey();
   const raw = localStorage.getItem(key);
+
   if (!raw) return [];
+
   try {
     const data = JSON.parse(raw);
-    return Array.isArray(data) ? data : [];
-  } catch {
+    if (!Array.isArray(data)) return [];
+    return data;
+  } catch (e) {
+    console.error("Error parseando carrito:", e);
     return [];
   }
 }
@@ -45,19 +52,26 @@ function obtenerTotalCarrito() {
   return carrito.reduce((acc, item) => acc + item.cantidad, 0);
 }
 
-// Actualizar contador visual del carrito en la página de productos (si existe)
+// Actualizar contador visual del carrito (ícono en el header)
 function actualizarContadorCarrito() {
   const span = document.getElementById("contadorCarrito");
   if (!span) return;
+
   const total = obtenerTotalCarrito();
-  span.textContent = `(${total})`;
+  span.textContent = total > 0 ? total : "0";
 }
 
-// Agregar un producto al carrito (requiere sesión)
+// Verificar si el usuario está logueado (muy simple, puedes ajustarlo)
+function estaLogueado() {
+  const token = localStorage.getItem("authToken");
+  return !!token;
+}
+
+// Agregar un producto al carrito
 function agregarAlCarrito(productId) {
-  // 1) Verificar que haya sesión
-  if (typeof estaLogueado === "function" && !estaLogueado()) {
-    alert("Para usar el carrito necesitas iniciar sesión.");
+  // 1) Validar login
+  if (!estaLogueado()) {
+    alert("Debes iniciar sesión para agregar al carrito.");
     window.location.href = "login.html";
     return;
   }
@@ -79,7 +93,7 @@ function agregarAlCarrito(productId) {
   } else {
     carrito.push({
       productoId: idNum,
-      cantidad: 1,
+      cantidad: 1
     });
   }
 
@@ -87,11 +101,11 @@ function agregarAlCarrito(productId) {
   guardarCarrito(carrito);
   actualizarContadorCarrito();
 
-  // Feedback sencillo
-  console.log(`Producto ${idNum} agregado al carrito.`);
+  // 5) Feedback al usuario
+  alert("Producto agregado al carrito.");
 }
 
-// Conectar los botones "Agregar al carrito" de las tarjetas renderizadas
+// Conectar los botones "Agregar al carrito" de las tarjetas
 function conectarBotonesCarrito() {
   const botones = document.querySelectorAll(".add-to-cart-button");
   if (!botones || botones.length === 0) return;
@@ -102,7 +116,9 @@ function conectarBotonesCarrito() {
   });
 }
 
-// Ejecutar al cargar la página para que el contador se vea correcto
+// Ejecutar al cargar la página
 document.addEventListener("DOMContentLoaded", () => {
   actualizarContadorCarrito();
+  // Si la página ya tiene tarjetas renderizadas, conectamos los botones
+  conectarBotonesCarrito();
 });
