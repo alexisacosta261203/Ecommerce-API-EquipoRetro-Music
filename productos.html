@@ -1,0 +1,132 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Tienda de Instrumentos Musicales</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+   <link rel="stylesheet" href="css/estilos.css">
+<link rel="stylesheet" href="css/accessibility.css">
+<link rel="stylesheet" href="estilos.css" />
+
+
+</head>
+<body>
+     <!-- Header estandar -->
+    <header class="top-header">
+  <div class="logo-derecha">
+    <img src="img/logo.png" alt="Logo Retro Music" class="logo-img">
+    <h2 class="logo-text">
+      <span class="retro">RETRO</span>
+      <span class="music">MUSIC</span>
+    </h2>
+  </div>
+
+  <nav class="menu-derecha">
+    <ul>
+      <li><a href="index.html">Inicio</a></li>
+      <li><a href="productos.html">Tienda</a></li>
+      <li><a href="marcas.html">Marcas</a></li>
+      <li><a href="nosotros.html">Nosotros</a></li>
+      <li><a href="contacto.html">Contacto</a></li>
+      <li id="menu-auth"></li>
+    </ul>
+  </nav>
+</header>
+
+    <!-- Header de la página -->
+    <header class="header">
+        <div class="header-container">
+            <div class="header-content">
+                <h1 class="header-title">Todos los productos</h1>
+                <div class="header-actions">
+                    <!-- Contador de productos (ya lo maneja app.js) -->
+                    <span class="product-counter" id="contadorProductos">0 productos</span>
+
+                    <!-- Botón de carrito con contador -->
+                   <button class="cart-button" onclick="window.location.href='carrito.html'">
+                        <i class="fas fa-shopping-cart cart-icon"></i>
+                        <span>Carrito</span>
+                        <span id="contadorCarrito" class="cart-counter">(0)</span>
+                    </button>
+
+                </div>
+            </div>
+        </div>
+    </header>
+
+    <!-- Contenido principal -->
+    <main class="main-container">
+        <!-- Sección de filtros -->
+        <section class="filters-section">
+            <!-- Filtro por categorías -->
+            <div class="filter-group">
+                <span class="filter-label">Categorías:</span>
+                <div class="filter-buttons" id="categoriasContainer">
+                    <button class="filter-button active" data-tipo="categoria" data-valor="">
+                        Todas
+                    </button>
+                    <!-- Los botones de categorías se cargarán dinámicamente -->
+                </div>
+            </div>
+
+            <!-- Filtro por marcas -->
+            <div class="filter-group">
+                <span class="filter-label">Marcas:</span>
+                <div class="filter-buttons" id="marcasContainer">
+                    <button class="filter-button active" data-tipo="marca" data-valor="">
+                        Todas
+                    </button>
+                    <!-- Los botones de marcas se cargarán dinámicamente -->
+                </div>
+            </div>
+
+            <!-- Ordenamiento -->
+            <div class="sort-group">
+                <span class="filter-label">Ordenar por:</span>
+                <select id="ordenSelect" class="sort-select">
+                    <option value="recomendados">Recomendados</option>
+                    <option value="precio-asc">Precio: Menor a Mayor</option>
+                    <option value="precio-desc">Precio: Mayor a Menor</option>
+                    <option value="nombre-asc">Nombre A-Z</option>
+                </select>
+            </div>
+        </section>
+
+        <!-- Contador de productos filtrados -->
+        <div class="counter-section">
+            <span class="counter-text" id="contadorFiltrado"></span>
+        </div>
+
+        <!-- Grid de productos -->
+        <section id="productosContainer" class="products-grid">
+            <!-- Los productos se cargarán dinámicamente aquí -->
+        </section>
+    </main>
+
+
+    <!-- ========== MODAL PARA VISTA RÁPIDA DEL PRODUCTO ========== -->
+    <div class="producto-modal-overlay" id="productoModal">
+        <div class="producto-modal">
+            <button class="modal-close-btn" id="closeModalBtn">
+                <i class="fas fa-times"></i>
+            </button>
+            <div class="modal-content" id="modalContent">
+                <!-- El contenido se cargará dinámicamente con JavaScript -->
+                <div class="modal-loading">
+                    <i class="fas fa-spinner fa-spin"></i>
+                    <p>Cargando producto...</p>
+                </div>
+            </div>
+        </div>
+    </div>
+
+
+    <!-- Scripts -->
+    <script src="js/accessibility.js"></script>
+    <script src="js/session.js"></script>
+    <script src="js/cart.js"></script>
+    <script src="app.js"></script>
+    
+</body>
+</html>

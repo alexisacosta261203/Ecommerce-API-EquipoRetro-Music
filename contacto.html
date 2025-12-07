@@ -1,0 +1,92 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <title>Contacto</title>
+    <link rel="stylesheet" href="css/estilos.css">
+</head>
+<body>
+   <header class="top-header">
+  <div class="logo-derecha">
+    <img src="img/logo.png" alt="Logo Retro Music" class="logo-img">
+    <h2 class="logo-text">
+      <span class="retro">RETRO</span>
+      <span class="music">MUSIC</span>
+    </h2>
+  </div>
+
+  <nav class="menu-derecha">
+    <ul>
+      <li><a href="index.html">Inicio</a></li>
+      <li><a href="productos.html">Tienda</a></li>
+      <li><a href="marcas.html">Marcas</a></li>
+      <li><a href="nosotros.html">Nosotros</a></li>
+      <li><a href="contacto.html">Contacto</a></li>
+      <li id="menu-auth"></li>
+    </ul>
+  </nav>
+</header>
+
+
+    <div class="container">
+        <form id="formContacto" class="form">
+            <h2>Contáctanos</h2>
+
+            <label for="nombre">Nombre:</label>
+            <input type="text" id="nombre" required>
+
+            <label for="correo">Correo electrónico:</label>
+            <input type="email" id="correo" required>
+
+            <label for="mensaje">Mensaje:</label>
+            <textarea id="mensaje" required></textarea>
+
+            <button type="submit">Enviar mensaje</button>
+
+            <p id="resultado"></p>
+        </form>
+    </div>
+
+
+    <footer class="footer">
+    <div class="footer-container">
+
+        <div class="footer-brand">
+            <h2><span class="retro">Retro</span> <span class="music">Music</span></h2>
+            <p>Donde la música y el artista se vuelven uno solo, los mejores instrumentos que verás en tu vida.</p>
+        </div>
+
+        <div class="footer-links">
+            <a href="#">Términos y Condiciones</a>
+            <a href="#">Política de Privacidad</a>
+        </div>
+
+    </div>
+        <div class="redes-sociales">
+            <a href="https://www.facebook.com/profile.php?id=61580623123898&sk=about" 
+               class="red-social" 
+               target="_blank" 
+               rel="noopener noreferrer" 
+               aria-label="Facebook">
+                <i class="fa-brands fa-facebook-f"></i>
+            </a>
+            
+            <a href="https://www.instagram.com/retromusic377517/" 
+               class="red-social" 
+               target="_blank" 
+               rel="noopener noreferrer" 
+               aria-label="Instagram">
+                <i class="fa-brands fa-instagram"></i>
+            </a>
+        </div>
+
+    <div class="footer-bottom">
+        © 2025 Por RetroMusic - Proyecto académico.
+    </div>
+</footer>
+        <script src="js/accessibility.js"></script>
+        <script src="js/session.js"></script>
+        <script src="js/contacto.js"></script>
+</body>
+</html>
+

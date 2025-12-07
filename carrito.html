@@ -1,0 +1,102 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Retro Music - Carrito de compras</title>
+
+  <link rel="stylesheet" href="css/accessibility.css">
+  <link rel="stylesheet" href="css/estilos.css">
+</head>
+<body>
+ <header class="top-header">
+  <div class="logo-derecha">
+    <img src="img/logo.png" alt="Logo Retro Music" class="logo-img">
+    <h2 class="logo-text">
+      <span class="retro">RETRO</span>
+      <span class="music">MUSIC</span>
+    </h2>
+  </div>
+
+  <nav class="menu-derecha">
+    <ul>
+      <li><a href="index.html">Inicio</a></li>
+      <li><a href="productos.html">Tienda</a></li>
+      <li><a href="marcas.html">Marcas</a></li>
+      <li><a href="nosotros.html">Nosotros</a></li>
+      <li><a href="contacto.html">Contacto</a></li>
+      <li id="menu-auth"></li>
+    </ul>
+  </nav>
+</header>
+
+
+  <main class="cart-main">
+    <section class="cart-container">
+      <h1>Carrito de compras</h1>
+
+      <div id="cartEmpty" class="cart-empty" style="display:none;">
+        Tu carrito está vacío. 🛒
+        <a href="productos.html">Ver productos</a>
+      </div>
+
+      <div id="cartContent" style="display:none;">
+        <table class="cart-table">
+          <thead>
+            <tr>
+              <th>Producto</th>
+              <th>Precio</th>
+              <th>Cantidad</th>
+              <th>Subtotal</th>
+              <th></th>
+            </tr>
+          </thead>
+          <tbody id="cartBody">
+            <!-- filas dinámicas -->
+          </tbody>
+        </table>
+
+        <div class="cart-summary">
+          <div>
+            <p>Subtotal: <span id="cartSubtotal">$0.00</span></p>
+            <p>IVA (16%): <span id="cartIva">$0.00</span></p>
+            <p class="cart-total">Total: <span id="cartTotal">$0.00</span></p>
+          </div>
+
+          <button id="btnConfirmarCompra" class="cart-confirm-button">
+            Confirmar compra
+          </button>
+
+          <div id="cartMensaje" class="cart-message"></div>
+        </div>
+      </div>
+    </section>
+  </main>
+
+  <footer class="auth-footer">
+    Retro Music · Proyecto Sistemas Web · 2025
+    <div class="redes-sociales">
+            <a href="https://www.facebook.com/profile.php?id=61580623123898&sk=about" 
+               class="red-social" 
+               target="_blank" 
+               rel="noopener noreferrer" 
+               aria-label="Facebook">
+                <i class="fa-brands fa-facebook-f"></i>
+            </a>
+            
+            <a href="https://www.instagram.com/retromusic377517/" 
+               class="red-social" 
+               target="_blank" 
+               rel="noopener noreferrer" 
+               aria-label="Instagram">
+                <i class="fa-brands fa-instagram"></i>
+            </a>
+        </div>
+  </footer>
+
+  <script src="js/accessibility.js"></script>
+  <script src="js/session.js"></script>
+  <script src="js/cart.js"></script>
+  <script src="js/carrito.js"></script>
+</body>
+</html>
